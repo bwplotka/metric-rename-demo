@@ -1,0 +1,48 @@
+# Schema: https://github.com/open-telemetry/weaver/blob/main/schemas/semconv.schema.json
+groups:
+- id: metric.my-org.custom_elements
+  type: metric
+  metric_name: my_app_custom_elements_total
+  brief: "Custom counter metric for my app counting important elements. It serves as an example of a very important metric that everyone is using."
+  instrument: counter
+  # Unit schema: https://github.com/open-telemetry/semantic-conventions/blob/main/docs/general/metrics.md#instrument-units
+  # It comes from https://unitsofmeasure.org/ucum standard.
+  unit: "elements"
+  attributes:
+  - id: metric.my-org.custom_elements.integer
+    tag: "integer"
+    type: int
+    requirement_level: required
+    brief: |
+      This is an important label that specifies the integer for this count.
+  - id: metric.my-org.custom_elements.category
+    tag: "category"
+    type:
+      members:
+      - id: a
+        value: "a"
+        stability: stable
+      - id: b
+        value: "b"
+        stability: stable
+      - id: other
+        value: "other"
+        stability: stable
+    requirement_level: required
+    brief: |
+      This is an important label that specifies the category for this count.
+  - id: metric.my-org.custom_elements.fraction
+    tag: "fraction"
+    type: double
+    requirement_level: recommended
+    brief: |
+      This is an important label that specifies the fraction for this count.
+  stability: stable
+- id: metric.my-org.some_elements
+  type: metric
+  metric_name: my_app_some_elements_total
+  deprecated: "Deprecated, not needed anymore"
+  brief: "old metric"
+  instrument: counter
+  unit: "unknown"
+  stability: experimental

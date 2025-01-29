@@ -20,13 +20,17 @@ $(BUF):
 MDOX = mdox
 $(MDOX):
 	@go install github.com/bwplotka/mdox@latest
+
+# Hacky, replace the binary path for yourself for now.
+# One could use docker as well. TODO: Fix this.
+WEAVER = ../otel-weaver/target/debug/weaver
+
 # ------
 
 .PHONY: help
 help: ## Display this help and any documented user-facing targets. Other undocumented targets may be present in the Makefile.
 help:
 	@awk 'BEGIN {FS = ": ##"; printf "Usage:\n  make <target>\n\nTargets:\n"} /^[a-zA-Z0-9_\.\-\/%]+: ##/ { printf "  %-45s %s\n", $$1, $$2 }' $(MAKEFILE_LIST)
-
 
 .PHONY: docker
 docker:
@@ -48,4 +52,14 @@ format: $(GOFUMPT) $(GOIMPORTS) $(MDOX)
 	@$(GOFUMPT) -extra -w $(GO_FILES)
 	@echo ">> format documentation"
 	@$(MDOX) fmt --soft-wraps ./*.md
+
+SEMCONV_VERSION ?= v0.1.0
+.PHONY: gen # Generate artefacts e.g. metric definitions from my-org semconv.
+gen:
+	@echo ">> weaver generate"
+	@$(WEAVER) registry generate \
+		--registry=./my-org/semconv/$(SEMCONV_VERSION) \
+		--templates=./client_golang/semconv \
+		go \
+		./go/my-app/semconv/$(SEMCONV_VERSION)
 
