@@ -33,7 +33,7 @@ func MustNewCustomElementsCounterVec(reg prometheus.Registerer) *prometheus.Coun
 	return promauto.With(reg).NewCounterVec(prometheus.CounterOpts{
 		Name: "my_app_custom_elements_total",
 		Help: "Custom counter metric for my app counting important elements. It serves as an example of a very important metric that everyone is using.",
-		// Unit: "elements" // TODO(bwplotka): Add Unit as one of the supported options.
+		// Unit: "{elements}" // TODO(bwplotka): Add Unit as one of the supported options.
 	}, []string{
 		"integer",
 		"category",

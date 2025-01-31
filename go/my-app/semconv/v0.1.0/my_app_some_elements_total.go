@@ -25,7 +25,7 @@ func MustNewSomeElementsCounterVec(reg prometheus.Registerer) *prometheus.Counte
 	return promauto.With(reg).NewCounterVec(prometheus.CounterOpts{
 		Name: "my_app_some_elements_total",
 		Help: "old metric",
-		// Unit: "unknown" // TODO(bwplotka): Add Unit as one of the supported options.
+		// Unit: "{unknown}" // TODO(bwplotka): Add Unit as one of the supported options.
 	}, []string{
 	})
 }

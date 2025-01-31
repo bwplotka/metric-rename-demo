@@ -7,12 +7,11 @@ groups:
   instrument: counter
   # Unit schema: https://github.com/open-telemetry/semantic-conventions/blob/main/docs/general/metrics.md#instrument-units
   # It comes from https://unitsofmeasure.org/ucum standard.
-  unit: "elements"
+  unit: "{elements}"
   attributes:
   - id: metric.my-org.custom_elements.integer
     tag: "integer"
     type: int
-    requirement_level: required
     brief: |
       This is an important label that specifies the integer for this count.
   - id: metric.my-org.custom_elements.category
@@ -28,13 +27,11 @@ groups:
       - id: other
         value: "other"
         stability: stable
-    requirement_level: required
     brief: |
       This is an important label that specifies the category for this count.
   - id: metric.my-org.custom_elements.fraction
     tag: "fraction"
     type: double
-    requirement_level: recommended
     brief: |
       This is an important label that specifies the fraction for this count.
   stability: stable
@@ -44,5 +41,5 @@ groups:
   deprecated: "Deprecated, not needed anymore"
   brief: "old metric"
   instrument: counter
-  unit: "unknown"
+  unit: "{unknown}"
   stability: experimental
