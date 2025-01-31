@@ -1,0 +1,17 @@
+templates:
+- template: metric.go.j2
+  filter: >
+    .groups
+    | map(select(.type == "metric"))
+    | sort_by(.metric_name)
+  application_mode: each
+
+comment_formats:
+  go:
+    format: markdown
+    prefix: "// "
+    indent_first_level_list_items: true
+    shortcut_reference_link: true
+    trim: true
+    remove_trailing_dots: true
+default_comment_format: go

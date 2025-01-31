@@ -3,11 +3,13 @@ package main
 import (
 	"context"
 	"flag"
+	"log"
 	"log/slog"
 	"net/http"
 	"os"
 	"syscall"
 
+	semconv "github.com/bwplotka/metric-rename-demo/go/my-app/my-app/semconv/v0.1.0"
 	"github.com/nelkinda/health-go"
 	"github.com/oklog/run"
 	"github.com/prometheus/client_golang/prometheus"
@@ -18,6 +20,7 @@ import (
 
 func main() {
 	addrFlag := flag.String("listen-address", ":9011", "Address to listen on. Available HTTP paths: /metrics")
+	metricDefinition := flag.String("metric-source", "manual", "Metric definition source to use ['manual', 'generated@v0.1.0'")
 	flag.Parse()
 
 	reg := prometheus.NewRegistry()
@@ -26,12 +29,16 @@ func main() {
 		collectors.NewProcessCollector(collectors.ProcessCollectorOpts{}),
 	)
 
-	customStableMetric := promauto.With(reg).NewCounterVec(prometheus.CounterOpts{
-		Name: "my_app_custom_counter_total",
-		Help: "Custom counter metric for my app counts important things. It serves as an example " +
-				"of a very important metric that everyone is using.",
-	}, []string{"integer", "category", "fraction"})
-	customStableMetric.WithLabelValues("101", "AType", "1.22314").Inc()
+	switch *metricDefinition {
+	case "manual":
+		m := mustNewCustomStableMetric(reg)
+		m.WithLabelValues("101", "a", "1.22314").Inc()
+	case "generated@v0.1.0":
+		m := semconv.MustNewCustomElementsCounterVec(reg)
+		m.WithLabelValues("101", string(semconv.ACustomElementsCategory), "1.22314").Inc() // TODO(bwplotka): Make it more type safe.
+	default:
+		log.Fatalf("unknown -metric-source source, got %v", *metricDefinition)
+	}
 
 	var g run.Group
 	{

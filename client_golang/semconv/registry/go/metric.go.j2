@@ -1,0 +1,87 @@
+{%- set my_file_name = ctx.metric_name | lower | snake_case ~ ".go" -%}
+{{- template.set_file_name(my_file_name) -}}
+{% set construct_name = ctx.id.split('.')[-1] %}
+{%- set instrToVecTypes = {
+ 	'counter': "CounterVec",
+  'gauge': "GaugeVec",
+}-%}
+{%- set instrToOptTypes = {
+ 	'counter': "CounterOpts",
+	'gauge': "GaugeOpts",
+}-%}
+{%- set labelTypeToTypes = {
+	'string': "string",
+ 	'int': "int",
+	'double': "float64",
+}-%}
+{% macro const_label_type(label) -%}
+{{ construct_name | pascal_case ~ label.tag | pascal_case }}
+{%- endmacro %}
+// Copyright 2025 The Prometheus Authors
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+// Code generated from semantic convention specification. DO NOT EDIT.
+
+package semconv // TODO(bwplotka): Use id prefix or something more unique?
+
+import (
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promauto"
+)
+
+{%- for label in ctx.attributes -%}
+	{%- if label.type.members is defined %}
+
+type {{ const_label_type(label) }} string
+
+const (
+	{%- for value in label.type.members %}
+		{{ value.id | pascal_case }}{{ const_label_type(label) }} {{ const_label_type(label) }} = "{{ value.value }}"
+	{%- endfor %}
+)
+	{%- endif %}
+{%- endfor %}
+
+func MustNew{{ construct_name | pascal_case }}{{ ctx.instrument | pascal_case }}Vec(reg prometheus.Registerer) *prometheus.{{ instrToVecTypes[ctx.instrument] }} {
+	return promauto.With(reg).New{{ instrToVecTypes[ctx.instrument] }}(prometheus.{{ instrToOptTypes[ctx.instrument] }}{
+		Name: "{{ ctx.metric_name }}",
+		{% if ctx.note is defined -%}
+		Help: "{{ ctx.note }}",
+		{% else -%}
+		Help: "{{ ctx.brief }}",
+		{%- endif %}
+		// Unit: "{{ ctx.unit }}" // TODO(bwplotka): Add Unit as one of the supported options.
+	}, []string{
+{%- for label in ctx.attributes %}
+		"{{label.tag}}",
+{%- endfor %}
+	})
+}
+
+/*
+TODO(bwplotka): Add more type safety e.g. for CustomElementsCounterVec:
+
+type CustomElementsCounterVec struct {
+	prometheus.CounterVec
+}
+
+func (v *CustomElementsCounterVec) WithLabelValues(integer int, category CustomElementsCategory, fraction float64) prometheus.Counter {
+	// This is not ideal as we do, potentially expensive stringifying on the hot path.
+  // Fix might require internals to completely differ in the client_golang for the efficient solution.
+	return v.CounterVec.WithLabelValues(fmt.Sprintf("%v", integer), string(category), fmt.Sprintf("%v", fraction))
+}
+*/
+
+
+
+
