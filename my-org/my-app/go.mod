@@ -1,4 +1,4 @@
-module github.com/bwplotka/metric-rename-demo/go/my-app
+module github.com/bwplotka/metric-rename-demo/my-org/my-app
 
 go 1.22.6
 

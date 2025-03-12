@@ -21,9 +21,14 @@ MDOX = mdox
 $(MDOX):
 	@go install github.com/bwplotka/mdox@latest
 
-# Hacky, replace the binary path for yourself for now.
-# One could use docker as well. TODO: Fix this.
-WEAVER = ../otel-weaver/target/debug/weaver
+CARGO_HOME ?= ${HOME}/.cargo
+WEAVER_VERSION = v0.13.2
+WEAVER = $(CARGO_HOME)/bin/weaver-$(WEAVER_VERSION)
+$(WEAVER):
+	@echo "Installing $(WEAVER)"
+	@curl --proto '=https' --tlsv1.2 -LsSf https://github.com/open-telemetry/weaver/releases/download/$(WEAVER_VERSION)/weaver-installer.sh | sh
+	cp $(CARGO_HOME)/bin/weaver $(WEAVER)
+	rm $(CARGO_HOME)/bin/weaver
 
 # ------
 
@@ -53,13 +58,29 @@ format: $(GOFUMPT) $(GOIMPORTS) $(MDOX)
 	@echo ">> format documentation"
 	@$(MDOX) fmt --soft-wraps ./*.md
 
-SEMCONV_VERSION ?= v0.1.0
+SEMCONV_VERSION1 ?= v0.1.0
+SEMCONV_VERSION2 ?= v0.2.0
 .PHONY: gen # Generate artefacts e.g. metric definitions from my-org semconv.
-gen:
-	@echo ">> weaver generate"
+gen: $(WEAVER)
+	@echo ">> weaver generate $(SEMCONV_VERSION1) artefacts"
 	@$(WEAVER) registry generate \
-		--registry=./my-org/semconv/$(SEMCONV_VERSION) \
-		--templates=./client_golang/semconv \
+		--registry=./my-org/semconv/$(SEMCONV_VERSION1) \
+		--templates=./prometheus/weaver_templates/client_golang \
+		--future \
 		go \
-		./go/my-app/semconv/$(SEMCONV_VERSION)
-
+		./my-org/my-app/semconv.gen/$(SEMCONV_VERSION1)
+	@echo ">> weaver generate $(SEMCONV_VERSION2) artefacts"
+	@$(WEAVER) registry generate \
+		--registry=./my-org/semconv/$(SEMCONV_VERSION2) \
+		--templates=./prometheus/weaver_templates/client_golang \
+		--future \
+		go \
+		./my-org/my-app/semconv.gen$(SEMCONV_VERSION2)
+	@echo ">> weaver generate $(SEMCONV_VERSION1) -> $(SEMCONV_VERSION2) diff"
+	@# https://github.com/open-telemetry/weaver/blob/b474b9d55b70200502ceb9732a93a5b0371a53aa/crates/weaver_diff/src/lib.rs#L43
+	@$(WEAVER) registry diff \
+		--baseline-registry=./my-org/semconv/$(SEMCONV_VERSION1) \
+		--registry=./my-org/semconv/$(SEMCONV_VERSION2) \
+		--diff-format=json \
+#		--diff-template=???
+#		--output=./my-org/semconv/$(SEMCONV_VERSION2)/diff

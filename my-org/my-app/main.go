@@ -9,7 +9,9 @@ import (
 	"os"
 	"syscall"
 
-	semconv "github.com/bwplotka/metric-rename-demo/go/my-app/my-app/semconv/v0.1.0"
+	semconv010 "github.com/bwplotka/metric-rename-demo/my-org/my-app/semconv.gen/v0.1.0"
+	semconv020 "github.com/bwplotka/metric-rename-demo/my-org/my-app/semconv.gen/v0.2.0"
+
 	"github.com/nelkinda/health-go"
 	"github.com/oklog/run"
 	"github.com/prometheus/client_golang/prometheus"
@@ -34,8 +36,11 @@ func main() {
 		m := mustNewCustomStableMetric(reg)
 		m.WithLabelValues("101", "a", "1.22314").Inc()
 	case "generated@v0.1.0":
-		m := semconv.MustNewCustomElementsCounterVec(reg)
-		m.WithLabelValues("101", string(semconv.ACustomElementsCategory), "1.22314").Inc() // TODO(bwplotka): Make it more type safe.
+		m := semconv010.MustNewCustomElementsCounterVec(reg)
+		m.WithLabelValues("101", string(semconv010.ACustomElementsCategory), "1.22314").Inc() // TODO(bwplotka): Make it more type safe.
+	case "generated@v0.2.0":
+		m := semconv020.MustNewCustomElementsCounterVec(reg)
+		m.WithLabelValues("101", string(semconv020.ACustomElementsCategory), "1.22314").Inc() // TODO(bwplotka): Make it more type safe.
 	default:
 		log.Fatalf("unknown -metric-source source, got %v", *metricDefinition)
 	}

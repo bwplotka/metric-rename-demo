@@ -2,32 +2,30 @@
 groups:
 - id: metric.my-org.custom_elements
   type: metric
-  metric_name: my_app_custom_elements_total
-  brief: "Custom counter metric (v0.1.0) for my app counting important elements. It serves as an example of a very important metric that everyone is using."
+  metric_name: my_app_custom_elements_changed_total
+  brief: "Changed custom counter metric (v0.2.0) for my app counting important elements. It serves as an example of a very important metric that everyone is using."
   instrument: counter
-  # Unit schema: https://github.com/open-telemetry/semantic-conventions/blob/main/docs/general/metrics.md#instrument-units
-  # It comes from https://unitsofmeasure.org/ucum standard.
   unit: "{elements}"
   stability: stable
   attributes:
   - id: metric.my-org.custom_elements.integer
-    tag: "integer"
+    tag: "number" # In v0.1.0 it was "integer".
     type: int
     brief: |
       This is an important label that specifies the integer for this count.
     stability: stable
   - id: metric.my-org.custom_elements.category
-    tag: "category"
+    tag: "class" # In v0.1.0 it was "category".
     type:
       members:
       - id: metric.my-org.custom_elements.category.val1
-        value: "first"
+        value: "FIRST"
         stability: stable
       - id: metric.my-org.custom_elements.category.val2
-        value: "second"
+        value: "SECOND"
         stability: stable
       - id: metric.my-org.custom_elements.category.other
-        value: "other"
+        value: "OTHER"
         stability: stable
     brief: |
       This is an important label that specifies the category for this count.
