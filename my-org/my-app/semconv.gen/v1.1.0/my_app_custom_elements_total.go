@@ -21,23 +21,23 @@ import (
 	"github.com/prometheus/client_golang/prometheus/promauto"
 )
 
-type CustomElementsClass string
+type MyAppCustomElementsTotal~counterCategory string
 
 const (
-		MetricMyOrgCustomElementsCategoryVal1CustomElementsClass CustomElementsClass = "FIRST"
-		MetricMyOrgCustomElementsCategoryVal2CustomElementsClass CustomElementsClass = "SECOND"
-		MetricMyOrgCustomElementsCategoryOtherCustomElementsClass CustomElementsClass = "OTHER"
+		FirstMyAppCustomElementsTotal~counterCategory MyAppCustomElementsTotal~counterCategory = "first"
+		SecondMyAppCustomElementsTotal~counterCategory MyAppCustomElementsTotal~counterCategory = "second"
+		OtherMyAppCustomElementsTotal~counterCategory MyAppCustomElementsTotal~counterCategory = "other"
 )
 
-func MustNewCustomElementsCounterVec(reg prometheus.Registerer) *prometheus.CounterVec {
+func MustNewMyAppCustomElementsTotal~counterCounterVec(reg prometheus.Registerer) *prometheus.CounterVec {
 	return promauto.With(reg).NewCounterVec(prometheus.CounterOpts{
-		Name: "my_app_custom_elements_changed_total",
-		Help: "Changed custom counter metric (v0.2.0) for my app counting important elements. It serves as an example of a very important metric that everyone is using.",
-		// Unit: "{elements}" // TODO(bwplotka): Add Unit as one of the supported options.
+		Name: "my_app_custom_elements_total",
+		Help: "Custom counter metric (v1.0.0) for my app counting important elements. It serves as an example of a very important metric that everyone is using.",
+		// Unit: "{unknown}" // TODO(bwplotka): Add Unit as one of the supported options.
 	}, []string{
-		"number",
-		"class",
 		"fraction",
+		"integer",
+		"category",
 	})
 }
 

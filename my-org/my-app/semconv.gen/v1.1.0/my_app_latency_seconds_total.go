@@ -21,12 +21,13 @@ import (
 	"github.com/prometheus/client_golang/prometheus/promauto"
 )
 
-func MustNewSomeElementsCounterVec(reg prometheus.Registerer) *prometheus.CounterVec {
-	return promauto.With(reg).NewCounterVec(prometheus.CounterOpts{
-		Name: "my_app_some_elements_total",
-		Help: "old metric",
-		// Unit: "{unknown}" // TODO(bwplotka): Add Unit as one of the supported options.
+func MustNewHistogramHistogramVec(reg prometheus.Registerer) *prometheus. {
+	return promauto.With(reg).New(prometheus.{
+		Name: "my_app_latency_seconds_total",
+		Help: "Histogram with my-app latency seconds (v1.1.0)",
+		// Unit: "seconds" // TODO(bwplotka): Add Unit as one of the supported options.
 	}, []string{
+		"code",
 	})
 }
 

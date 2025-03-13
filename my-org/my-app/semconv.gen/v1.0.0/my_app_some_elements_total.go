@@ -21,23 +21,12 @@ import (
 	"github.com/prometheus/client_golang/prometheus/promauto"
 )
 
-type CustomElementsCategory string
-
-const (
-		MetricMyOrgCustomElementsCategoryVal1CustomElementsCategory CustomElementsCategory = "first"
-		MetricMyOrgCustomElementsCategoryVal2CustomElementsCategory CustomElementsCategory = "second"
-		MetricMyOrgCustomElementsCategoryOtherCustomElementsCategory CustomElementsCategory = "other"
-)
-
-func MustNewCustomElementsCounterVec(reg prometheus.Registerer) *prometheus.CounterVec {
+func MustNewMyAppSomeElementsTotal~counterCounterVec(reg prometheus.Registerer) *prometheus.CounterVec {
 	return promauto.With(reg).NewCounterVec(prometheus.CounterOpts{
-		Name: "my_app_custom_elements_total",
-		Help: "Custom counter metric (v0.1.0) for my app counting important elements. It serves as an example of a very important metric that everyone is using.",
-		// Unit: "{elements}" // TODO(bwplotka): Add Unit as one of the supported options.
+		Name: "my_app_some_elements_total",
+		Help: "some metric",
+		// Unit: "{unknown}" // TODO(bwplotka): Add Unit as one of the supported options.
 	}, []string{
-		"integer",
-		"category",
-		"fraction",
 	})
 }
 

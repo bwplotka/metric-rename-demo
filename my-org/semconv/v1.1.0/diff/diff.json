@@ -1,0 +1,59 @@
+{
+  "baseline": {
+    "semconv_version": "1.0.0"
+  },
+  "changes": {
+    "events": [],
+    "metrics": [
+      {
+        "name": "my_app_custom_elements_changed_total~counter",
+        "type": "added"
+      },
+      {
+        "backward": "my_app_latency_milliseconds_total~milliseconds.histogram.value = my_app_latency_seconds_total~seconds.histogram.value * 1000\n",
+        "fields": {
+          "metric_name": {
+            "new_name": "my_app_latency_seconds_total",
+            "old_name": "my_app_latency_milliseconds_total"
+          },
+          "unit": {
+            "new_name": "seconds",
+            "old_name": "milliseconds"
+          }
+        },
+        "forward": "my_app_latency_seconds_total~seconds.histogram.value = my_app_latency_milliseconds_total~milliseconds.histogram.value / 1000\n",
+        "id": "my_app_latency_milliseconds_total~milliseconds.histogram",
+        "note": "Ups, we used non-standard unit. This metric should be auto-transformable, see diff for all changes.",
+        "replaced_by_id": "my_app_latency_seconds_total~seconds.histogram",
+        "type": "updated"
+      },
+      {
+        "name": "my_app_latency_seconds_total~seconds.histogram",
+        "type": "added"
+      },
+      {
+        "fields": {
+          "metric_name": {
+            "new_name": "my_app_custom_elements_changed_total",
+            "old_name": "my_app_custom_elements_total"
+          }
+        },
+        "id": "my_app_custom_elements_total~counter",
+        "note": "We didn\u0027t like the old name sorry. This metric should be auto-transformable, see diff for all changes.",
+        "replaced_by_id": "my_app_custom_elements_changed_total~counter",
+        "type": "updated"
+      },
+      {
+        "name": "my_app_some_elements_total~counter",
+        "note": "Not useful anymore",
+        "type": "uncategorized"
+      }
+    ],
+    "registry_attributes": [],
+    "resources": [],
+    "spans": []
+  },
+  "head": {
+    "semconv_version": "1.1.0"
+  }
+}

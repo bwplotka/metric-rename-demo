@@ -21,12 +21,23 @@ import (
 	"github.com/prometheus/client_golang/prometheus/promauto"
 )
 
-func MustNewSomeElementsCounterVec(reg prometheus.Registerer) *prometheus.CounterVec {
+type MyAppCustomElementsChangedTotal~counterClass string
+
+const (
+		FirstMyAppCustomElementsChangedTotal~counterClass MyAppCustomElementsChangedTotal~counterClass = "FIRST"
+		SecondMyAppCustomElementsChangedTotal~counterClass MyAppCustomElementsChangedTotal~counterClass = "SECOND"
+		OtherMyAppCustomElementsChangedTotal~counterClass MyAppCustomElementsChangedTotal~counterClass = "OTHER"
+)
+
+func MustNewMyAppCustomElementsChangedTotal~counterCounterVec(reg prometheus.Registerer) *prometheus.CounterVec {
 	return promauto.With(reg).NewCounterVec(prometheus.CounterOpts{
-		Name: "my_app_some_elements_total",
-		Help: "old metric",
+		Name: "my_app_custom_elements_changed_total",
+		Help: "Custom counter metric (v1.1.0) for my app counting important elements. It serves as an example of a very important metric that everyone is using. Replacement to my_app_custom_elements_total~counter",
 		// Unit: "{unknown}" // TODO(bwplotka): Add Unit as one of the supported options.
 	}, []string{
+		"number",
+		"class",
+		"fraction",
 	})
 }
 
