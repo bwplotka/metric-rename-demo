@@ -6,11 +6,16 @@
     "events": [],
     "metrics": [
       {
+        "name": "my_app_some_elements_total~gauge",
+        "note": "Not useful anymore",
+        "type": "obsoleted"
+      },
+      {
         "name": "my_app_custom_elements_changed_total~counter",
         "type": "added"
       },
       {
-        "backward": "my_app_latency_milliseconds_total~milliseconds.histogram.value = my_app_latency_seconds_total~seconds.histogram.value * 1000\n",
+        "backward_promql": "$new * 1000",
         "fields": {
           "metric_name": {
             "new_name": "my_app_latency_seconds_total",
@@ -21,9 +26,9 @@
             "old_name": "milliseconds"
           }
         },
-        "forward": "my_app_latency_seconds_total~seconds.histogram.value = my_app_latency_milliseconds_total~milliseconds.histogram.value / 1000\n",
+        "forward_promql": "$old / 1000",
         "id": "my_app_latency_milliseconds_total~milliseconds.histogram",
-        "note": "Ups, we used non-standard unit. This metric should be auto-transformable, see diff for all changes.",
+        "note": "Ups, we did not use base unit, our bad. This metric should be auto-transformable, see diff for all changes.",
         "replaced_by_id": "my_app_latency_seconds_total~seconds.histogram",
         "type": "updated"
       },
@@ -32,6 +37,18 @@
         "type": "added"
       },
       {
+        "attributes": {
+          "category": {
+            "new_name": "class",
+            "old_name": "category",
+            "type": "renamed"
+          },
+          "integer": {
+            "new_name": "number",
+            "old_name": "integer",
+            "type": "renamed"
+          }
+        },
         "fields": {
           "metric_name": {
             "new_name": "my_app_custom_elements_changed_total",
@@ -42,11 +59,6 @@
         "note": "We didn\u0027t like the old name sorry. This metric should be auto-transformable, see diff for all changes.",
         "replaced_by_id": "my_app_custom_elements_changed_total~counter",
         "type": "updated"
-      },
-      {
-        "name": "my_app_some_elements_total~counter",
-        "note": "Not useful anymore",
-        "type": "uncategorized"
       }
     ],
     "registry_attributes": [],

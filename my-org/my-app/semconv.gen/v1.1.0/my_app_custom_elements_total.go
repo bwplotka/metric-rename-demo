@@ -35,9 +35,9 @@ func MustNewMyAppCustomElementsTotal~counterCounterVec(reg prometheus.Registerer
 		Help: "Custom counter metric (v1.0.0) for my app counting important elements. It serves as an example of a very important metric that everyone is using.",
 		// Unit: "{unknown}" // TODO(bwplotka): Add Unit as one of the supported options.
 	}, []string{
-		"fraction",
 		"integer",
 		"category",
+		"fraction",
 	})
 }
 

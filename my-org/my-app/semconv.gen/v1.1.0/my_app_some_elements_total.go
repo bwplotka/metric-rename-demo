@@ -21,8 +21,8 @@ import (
 	"github.com/prometheus/client_golang/prometheus/promauto"
 )
 
-func MustNewMyAppSomeElementsTotal~counterCounterVec(reg prometheus.Registerer) *prometheus.CounterVec {
-	return promauto.With(reg).NewCounterVec(prometheus.CounterOpts{
+func MustNewMyAppSomeElementsTotal~gaugeGaugeVec(reg prometheus.Registerer) *prometheus.GaugeVec {
+	return promauto.With(reg).NewGaugeVec(prometheus.GaugeOpts{
 		Name: "my_app_some_elements_total",
 		Help: "some metric",
 		// Unit: "{unknown}" // TODO(bwplotka): Add Unit as one of the supported options.

@@ -1,0 +1,12 @@
+# Whitespace control settings to simplify the definition of templates
+whitespace_control:
+  trim_blocks: true
+  lstrip_blocks: true
+  
+templates:
+  - template: relabeling.yaml.j2
+    filter: .
+    application_mode: single
+  - template: recording.yaml.j2
+    filter: .
+    application_mode: single

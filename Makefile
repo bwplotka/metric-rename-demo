@@ -82,10 +82,16 @@ gen: $(WEAVER)
 		go \
 		./my-org/my-app/semconv.gen/$(SEMCONV_VERSION2)
 	@echo ">> weaver generate $(SEMCONV_VERSION1) -> $(SEMCONV_VERSION2) diff"
-	@# https://github.com/open-telemetry/weaver/blob/b474b9d55b70200502ceb9732a93a5b0371a53aa/crates/weaver_diff/src/lib.rs#L43
 	@$(WEAVER) registry diff \
 		--simple --debug \
 		--baseline-registry=./my-org/semconv/$(SEMCONV_VERSION1) \
 		--registry=./my-org/semconv/$(SEMCONV_VERSION2) \
-		--diff-format=json --output=./my-org/semconv/$(SEMCONV_VERSION2)/diff
-#		--diff-template=???
+		--diff-format=json \
+		--output=./my-org/semconv/$(SEMCONV_VERSION2)/.gen
+	@echo ">> weaver generate $(SEMCONV_VERSION1) -> $(SEMCONV_VERSION2) relabelling rules for Prometheus"
+	@$(WEAVER) registry diff \
+		--simple --debug \
+		--baseline-registry=./my-org/semconv/$(SEMCONV_VERSION1) \
+		--registry=./my-org/semconv/$(SEMCONV_VERSION2) \
+	    --diff-template=./prometheus/weaver_templates/prometheus --diff-format=yaml \
+	    --output=./my-org/semconv/$(SEMCONV_VERSION2)/.gen

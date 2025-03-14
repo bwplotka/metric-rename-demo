@@ -1,0 +1,27 @@
+{%- set item_types = ["metrics"] -%}
+
+# Versioned Write
+# The goal is to have relabel rules to copy to support {{ ctx.baseline.semconv_version }} translated to {{ ctx.head.semconv_version }}
+relabel_configs:
+{% for item_type in item_types %}
+  {% if ctx.changes[item_type] %}
+    {% set attributes = ctx.changes[item_type] | selectattr('type', 'equalto', 'updated') | sort(attribute='name') -%}
+    {% if attributes -%}
+      {% for updated in attributes %}
+        {% if updated.fields.unit -%}
+          # TODO: continue
+        {% endif %}
+        # TODO(bwplotka): Relabel labels if we find change (has to be fixed in weaver first)
+        {% if updated.fields.metric_name -%}
+# action defaults to 'replace'
+- source_labels: __name__
+  regex: {{ updated.fields.metric_name.old_name }}
+  target_label: __name__
+  replacement: {{ updated.fields.metric_name.new_name }}
+        {% endif %}
+       {% endfor %}
+    {% endif %}
+  {% endif %}
+{% endfor %}
+
+
