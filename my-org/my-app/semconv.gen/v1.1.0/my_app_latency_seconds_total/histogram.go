@@ -1,4 +1,6 @@
 
+
+
 // Copyright 2025 The Prometheus Authors
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,36 +16,39 @@
 
 // Code generated from semantic convention specification. DO NOT EDIT.
 
-package semconv // TODO(bwplotka): Use id prefix or something more unique?
+package my_app_latency_seconds_total
 
 import (
+	"fmt"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promauto"
 )
 
-func MustNewHistogramHistogramVec(reg prometheus.Registerer) *prometheus. {
-	return promauto.With(reg).New(prometheus.{
+// MustNew returns my_app_latency_seconds_total~seconds.histogram.
+func MustNewHistogramVec(reg prometheus.Registerer) *HistogramVec {
+	reg = prometheus.WrapRegistererWith(prometheus.Labels{"__schema_url__": "https://github.com/bwplotka/metric-rename-demo/tree/main/my-org/semconv/v1.1.0"}, reg)
+	return &HistogramVec{promauto.With(reg).NewHistogramVec(prometheus.HistogramOpts{
 		Name: "my_app_latency_seconds_total",
 		Help: "Histogram with my-app latency seconds (v1.1.0)",
 		// Unit: "seconds" // TODO(bwplotka): Add Unit as one of the supported options.
 	}, []string{
+		// HTTP status code.
 		"code",
-	})
+	})}
 }
 
-/*
-TODO(bwplotka): Add more type safety e.g. for CustomElementsCounterVec:
-
-type CustomElementsCounterVec struct {
-	prometheus.CounterVec
+type HistogramVec struct {
+	*prometheus.HistogramVec
 }
 
-func (v *CustomElementsCounterVec) WithLabelValues(integer int, category CustomElementsCategory, fraction float64) prometheus.Counter {
-	// This is not ideal as we do, potentially expensive stringifying on the hot path.
+func (x *HistogramVec) WithLabelValues(
+	code int,
+) prometheus.Observer {
+	// TODO(bwplotka): This is actually not ideal for efficiency reasons (type conversions to string).
   // Fix might require internals to completely differ in the client_golang for the efficient solution.
-	return v.CounterVec.WithLabelValues(fmt.Sprintf("%v", integer), string(category), fmt.Sprintf("%v", fraction))
+	return x.HistogramVec.WithLabelValues(
+		fmt.Sprintf("%v", code),
+	)
 }
-*/
-
 
 

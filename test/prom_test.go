@@ -23,11 +23,10 @@ func TestMyApp_PrometheusWriting(t *testing.T) {
 	t.Cleanup(e.Close)
 	testutil.Ok(t, err)
 
-	// TODO Create my-app, create my-app-new containers (with new metric).
-	myApp := newMyApp(e, "my-app", myAppImage, nil)
-	myApp2 := newMyApp(e, "my-app", myAppImage, nil)
-	// Create self-scraping Prometheus writing two streams of PRW writes to sink-1: v1 and v2.
-	prom := newPrometheus(e, "prom-1", "quay.io/prometheus/prometheus:main", []string{myApp.InternalEndpoint("http"), myApp2.InternalEndpoint("http")}, nil)
+	// Create my-app-new containers. One creating metrics from , second from
+	myApp := newMyApp(e, "my-app-v1.0.0", myAppImage, map[string]string{"-metric-source": "generated@v1.0.0"})
+	myApp2 := newMyApp(e, "my-app-v1.1.0-metrics", myAppImage, map[string]string{"-metric-source": "generated@v1.1.0"})
+	prom := newPrometheus(e, "prom-1", "quay.io/bwplotka", []string{myApp.InternalEndpoint("http"), myApp2.InternalEndpoint("http")}, nil)
 	testutil.Ok(t, e2e.StartAndWaitReady(myApp, prom))
 
 	//const expectSamples float64 = 2e3

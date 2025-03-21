@@ -42,7 +42,7 @@ help:
 
 .PHONY: docker
 docker:
-	@export DOCKER_IMAGE=$(DOCKER_IMAGE) DOCKER_TAG=$(DOCKER_TAG) && bash scripts/build-docker.sh $(DOCKER_PUSH)
+	@export DOCKER_IMAGE=$(DOCKER_IMAGE) DOCKER_TAG=$(DOCKER_TAG) && bash scripts/build_docker.sh $(DOCKER_PUSH)
 
 .PHONY: test
 test: docker
@@ -67,17 +67,19 @@ SEMCONV_VERSION2 ?= v1.1.0
 gen: $(WEAVER)
 	@echo ">> weaver generate $(SEMCONV_VERSION1) artefacts"
 	@$(WEAVER) registry generate \
-		--simple \
+		--simple --debug \
 		--registry=./my-org/semconv/$(SEMCONV_VERSION1) \
 		--templates=./prometheus/weaver_templates/client_golang \
+		--param="schema_url=https://github.com/bwplotka/metric-rename-demo/tree/main/my-org/semconv/v1.0.0" \
 		--future \
 		go \
 		./my-org/my-app/semconv.gen/$(SEMCONV_VERSION1)
 	@echo ">> weaver generate $(SEMCONV_VERSION2) artefacts"
 	@$(WEAVER) registry generate \
-		--simple \
+		--simple --debug \
 		--registry=./my-org/semconv/$(SEMCONV_VERSION2) \
 		--templates=./prometheus/weaver_templates/client_golang \
+		--param="schema_url=https://github.com/bwplotka/metric-rename-demo/tree/main/my-org/semconv/v1.1.0" \
 		--future \
 		go \
 		./my-org/my-app/semconv.gen/$(SEMCONV_VERSION2)

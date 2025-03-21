@@ -1,0 +1,4 @@
+name: my-org
+description: my-org Semantic Conventions Registry
+semconv_version: 1.1.0
+schema_base_url: https://github.com/bwplotka/metric-rename-demo/tree/main/my-org/semconv

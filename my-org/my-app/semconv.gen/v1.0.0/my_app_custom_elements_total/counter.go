@@ -1,4 +1,6 @@
 
+
+
 // Copyright 2025 The Prometheus Authors
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,46 +16,55 @@
 
 // Code generated from semantic convention specification. DO NOT EDIT.
 
-package semconv // TODO(bwplotka): Use id prefix or something more unique?
+package my_app_custom_elements_total
 
 import (
+	"fmt"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promauto"
 )
 
-type MyAppCustomElementsTotal~counterCategory string
+type Category string
 
 const (
-		FirstMyAppCustomElementsTotal~counterCategory MyAppCustomElementsTotal~counterCategory = "first"
-		SecondMyAppCustomElementsTotal~counterCategory MyAppCustomElementsTotal~counterCategory = "second"
-		OtherMyAppCustomElementsTotal~counterCategory MyAppCustomElementsTotal~counterCategory = "other"
+		FirstCategory Category = "first"
+		SecondCategory Category = "second"
+		OtherCategory Category = "other"
 )
 
-func MustNewMyAppCustomElementsTotal~counterCounterVec(reg prometheus.Registerer) *prometheus.CounterVec {
-	return promauto.With(reg).NewCounterVec(prometheus.CounterOpts{
+// MustNew returns my_app_custom_elements_total~counter.
+func MustNewCounterVec(reg prometheus.Registerer) *CounterVec {
+	reg = prometheus.WrapRegistererWith(prometheus.Labels{"__schema_url__": "https://github.com/bwplotka/metric-rename-demo/tree/main/my-org/semconv/v1.0.0"}, reg)
+	return &CounterVec{promauto.With(reg).NewCounterVec(prometheus.CounterOpts{
 		Name: "my_app_custom_elements_total",
 		Help: "Custom counter metric (v1.0.0) for my app counting important elements. It serves as an example of a very important metric that everyone is using.",
 		// Unit: "{unknown}" // TODO(bwplotka): Add Unit as one of the supported options.
 	}, []string{
+		// Important label that specifies the integer for this count.
 		"integer",
+		// Important label that specifies the category for this count.
 		"category",
+		// This is an important label that specifies the fraction for this count.
 		"fraction",
-	})
+	})}
 }
 
-/*
-TODO(bwplotka): Add more type safety e.g. for CustomElementsCounterVec:
-
-type CustomElementsCounterVec struct {
-	prometheus.CounterVec
+type CounterVec struct {
+	*prometheus.CounterVec
 }
 
-func (v *CustomElementsCounterVec) WithLabelValues(integer int, category CustomElementsCategory, fraction float64) prometheus.Counter {
-	// This is not ideal as we do, potentially expensive stringifying on the hot path.
+func (x *CounterVec) WithLabelValues(
+	integer int,
+	category Category,
+	fraction float64,
+) prometheus.Counter {
+	// TODO(bwplotka): This is actually not ideal for efficiency reasons (type conversions to string).
   // Fix might require internals to completely differ in the client_golang for the efficient solution.
-	return v.CounterVec.WithLabelValues(fmt.Sprintf("%v", integer), string(category), fmt.Sprintf("%v", fraction))
+	return x.CounterVec.WithLabelValues(
+		fmt.Sprintf("%v", integer),
+		fmt.Sprintf("%v", category),
+		fmt.Sprintf("%v", fraction),
+	)
 }
-*/
-
 
 

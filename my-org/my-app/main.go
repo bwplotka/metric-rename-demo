@@ -8,9 +8,12 @@ import (
 	"net/http"
 	"os"
 	"syscall"
+	"time"
 
-	semconv010 "github.com/bwplotka/metric-rename-demo/my-org/my-app/semconv.gen/v0.1.0"
-	semconv020 "github.com/bwplotka/metric-rename-demo/my-org/my-app/semconv.gen/v0.2.0"
+	elements_v100 "github.com/bwplotka/metric-rename-demo/my-org/my-app/semconv.gen/v1.0.0/my_app_custom_elements_total"
+	elements_changed_v110 "github.com/bwplotka/metric-rename-demo/my-org/my-app/semconv.gen/v1.1.0/my_app_custom_elements_changed_total"
+	latency_millis_v100 "github.com/bwplotka/metric-rename-demo/my-org/my-app/semconv.gen/v1.0.0/my_app_latency_milliseconds_total"
+	latency_v110 "github.com/bwplotka/metric-rename-demo/my-org/my-app/semconv.gen/v1.1.0/my_app_latency_seconds_total"
 
 	"github.com/nelkinda/health-go"
 	"github.com/oklog/run"
@@ -22,7 +25,7 @@ import (
 
 func main() {
 	addrFlag := flag.String("listen-address", ":9011", "Address to listen on. Available HTTP paths: /metrics")
-	metricDefinition := flag.String("metric-source", "manual", "Metric definition source to use ['manual', 'generated@v0.1.0'")
+	metricDefinition := flag.String("metric-source", "manual", "Metric definition source to use ['manual', 'generated@v1.0.0', 'generated@v1.1.0")
 	flag.Parse()
 
 	reg := prometheus.NewRegistry()
@@ -31,21 +34,57 @@ func main() {
 		collectors.NewProcessCollector(collectors.ProcessCollectorOpts{}),
 	)
 
+	var (
+		elementsCount prometheus.Counter
+		latency       prometheus.Observer
+	)
+
 	switch *metricDefinition {
 	case "manual":
-		m := mustNewCustomStableMetric(reg)
-		m.WithLabelValues("101", "a", "1.22314").Inc()
-	case "generated@v0.1.0":
-		m := semconv010.MustNewCustomElementsCounterVec(reg)
-		m.WithLabelValues("101", string(semconv010.ACustomElementsCategory), "1.22314").Inc() // TODO(bwplotka): Make it more type safe.
-	case "generated@v0.2.0":
-		m := semconv020.MustNewCustomElementsCounterVec(reg)
-		m.WithLabelValues("101", string(semconv020.ACustomElementsCategory), "1.22314").Inc() // TODO(bwplotka): Make it more type safe.
+		elementsCount = mustNewCustomElements(reg).
+			WithLabelValues("100", "first", "1.2414")
+		latency = mustNewLatency(reg).
+			WithLabelValues("200")
+
+		// Notice the type safety of generated code below vs manual above.
+	case "generated@v1.0.0":
+		elementsCount = elements_v100.MustNewCounterVec(reg).
+			WithLabelValues(100, elements_v100.FirstCategory, 1.2414)
+		latency = latency_millis_v100.MustNewHistogramVec(reg).
+			WithLabelValues(200)
+	case "generated@v1.1.0":
+		elementsCount = elements_changed_v110.MustNewCounterVec(reg).
+			WithLabelValues(100, elements_changed_v110.FirstClass, 1.2414)
+		latency = latency_v110.MustNewHistogramVec(reg).
+			WithLabelValues(200)
 	default:
 		log.Fatalf("unknown -metric-source source, got %v", *metricDefinition)
 	}
 
 	var g run.Group
+	{
+		ctx, cancel := context.WithCancel(context.Background())
+		g.Add(func() error {
+
+			for {
+				const interval = 10 * time.Second
+				select {
+				case <-ctx.Done():
+					return nil
+				case <-time.After(interval):
+					elementsCount.Inc()
+					if *metricDefinition == "manual" || *metricDefinition == "generated@v1.0.0" {
+						latency.Observe(float64(interval.Milliseconds()))
+					} else {
+						// From v1.1.0 metric reports base units
+						latency.Observe(float64(interval.Seconds()))
+					}
+				}
+			}
+		}, func(err error) {
+			cancel()
+		})
+	}
 	{
 		healthHandler := health.New(health.Health{}).Handler
 		httpSrv := &http.Server{Addr: *addrFlag}

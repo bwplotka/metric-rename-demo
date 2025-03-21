@@ -6,15 +6,6 @@
     "events": [],
     "metrics": [
       {
-        "name": "my_app_some_elements_total~gauge",
-        "note": "Not useful anymore",
-        "type": "obsoleted"
-      },
-      {
-        "name": "my_app_custom_elements_changed_total~counter",
-        "type": "added"
-      },
-      {
         "backward_promql": "$new * 1000",
         "fields": {
           "metric_name": {
@@ -34,6 +25,10 @@
       },
       {
         "name": "my_app_latency_seconds_total~seconds.histogram",
+        "type": "added"
+      },
+      {
+        "name": "my_app_custom_elements_changed_total~counter",
         "type": "added"
       },
       {
@@ -59,6 +54,11 @@
         "note": "We didn\u0027t like the old name sorry. This metric should be auto-transformable, see diff for all changes.",
         "replaced_by_id": "my_app_custom_elements_changed_total~counter",
         "type": "updated"
+      },
+      {
+        "name": "my_app_some_elements_total~gauge",
+        "note": "Not useful anymore",
+        "type": "obsoleted"
       }
     ],
     "registry_attributes": [],

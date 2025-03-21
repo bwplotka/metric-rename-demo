@@ -1,4 +1,6 @@
 
+
+
 // Copyright 2025 The Prometheus Authors
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,35 +16,20 @@
 
 // Code generated from semantic convention specification. DO NOT EDIT.
 
-package semconv // TODO(bwplotka): Use id prefix or something more unique?
+package my_app_some_elements_total
 
 import (
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promauto"
 )
 
-func MustNewMyAppSomeElementsTotal~gaugeGaugeVec(reg prometheus.Registerer) *prometheus.GaugeVec {
-	return promauto.With(reg).NewGaugeVec(prometheus.GaugeOpts{
+// MustNew returns my_app_some_elements_total~gauge.
+func MustNewGauge(reg prometheus.Registerer) prometheus.Gauge {
+	return promauto.With(reg).NewGauge(prometheus.GaugeOpts{
 		Name: "my_app_some_elements_total",
 		Help: "some metric",
 		// Unit: "{unknown}" // TODO(bwplotka): Add Unit as one of the supported options.
-	}, []string{
 	})
 }
-
-/*
-TODO(bwplotka): Add more type safety e.g. for CustomElementsCounterVec:
-
-type CustomElementsCounterVec struct {
-	prometheus.CounterVec
-}
-
-func (v *CustomElementsCounterVec) WithLabelValues(integer int, category CustomElementsCategory, fraction float64) prometheus.Counter {
-	// This is not ideal as we do, potentially expensive stringifying on the hot path.
-  // Fix might require internals to completely differ in the client_golang for the efficient solution.
-	return v.CounterVec.WithLabelValues(fmt.Sprintf("%v", integer), string(category), fmt.Sprintf("%v", fraction))
-}
-*/
-
 
 
