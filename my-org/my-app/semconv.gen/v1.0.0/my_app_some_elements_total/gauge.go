@@ -25,6 +25,8 @@ import (
 
 // MustNew returns my_app_some_elements_total~gauge.
 func MustNewGauge(reg prometheus.Registerer) prometheus.Gauge {
+	reg = prometheus.WrapRegistererWith(prometheus.Labels{"__schema_url__": "https://github.com/bwplotka/metric-rename-demo/tree/main/my-org/semconv/v1.0.0"}, reg)
+
 	return promauto.With(reg).NewGauge(prometheus.GaugeOpts{
 		Name: "my_app_some_elements_total",
 		Help: "some metric",

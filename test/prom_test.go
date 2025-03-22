@@ -24,10 +24,12 @@ func TestMyApp_PrometheusWriting(t *testing.T) {
 	testutil.Ok(t, err)
 
 	// Create my-app-new containers. One creating metrics from , second from
-	myApp := newMyApp(e, "my-app-v1.0.0", myAppImage, map[string]string{"-metric-source": "generated@v1.0.0"})
+	myApp := newMyApp(e, "my-app-v1.0.0-metrics", myAppImage, map[string]string{"-metric-source": "generated@v1.0.0"})
 	myApp2 := newMyApp(e, "my-app-v1.1.0-metrics", myAppImage, map[string]string{"-metric-source": "generated@v1.1.0"})
-	prom := newPrometheus(e, "prom-1", "quay.io/bwplotka", []string{myApp.InternalEndpoint("http"), myApp2.InternalEndpoint("http")}, nil)
-	testutil.Ok(t, e2e.StartAndWaitReady(myApp, prom))
+
+	// Prometheus built from "rename-kubecon" branch.
+	prom := newPrometheus(e, "prom-1", "quay.io/bwplotka/prometheus:rename-kubecon-v1", []string{myApp.InternalEndpoint("http"), myApp2.InternalEndpoint("http")}, nil)
+	testutil.Ok(t, e2e.StartAndWaitReady(myApp, myApp2, prom))
 
 	//const expectSamples float64 = 2e3
 	//

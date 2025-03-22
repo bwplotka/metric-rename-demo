@@ -35,6 +35,7 @@ const (
 // MustNew returns my_app_custom_elements_total~counter.
 func MustNewCounterVec(reg prometheus.Registerer) *CounterVec {
 	reg = prometheus.WrapRegistererWith(prometheus.Labels{"__schema_url__": "https://github.com/bwplotka/metric-rename-demo/tree/main/my-org/semconv/v1.0.0"}, reg)
+
 	return &CounterVec{promauto.With(reg).NewCounterVec(prometheus.CounterOpts{
 		Name: "my_app_custom_elements_total",
 		Help: "Custom counter metric (v1.0.0) for my app counting important elements. It serves as an example of a very important metric that everyone is using.",

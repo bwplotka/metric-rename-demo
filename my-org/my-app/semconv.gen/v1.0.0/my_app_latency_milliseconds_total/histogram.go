@@ -27,6 +27,7 @@ import (
 // MustNew returns my_app_latency_milliseconds_total~milliseconds.histogram.
 func MustNewHistogramVec(reg prometheus.Registerer) *HistogramVec {
 	reg = prometheus.WrapRegistererWith(prometheus.Labels{"__schema_url__": "https://github.com/bwplotka/metric-rename-demo/tree/main/my-org/semconv/v1.0.0"}, reg)
+
 	return &HistogramVec{promauto.With(reg).NewHistogramVec(prometheus.HistogramOpts{
 		Name: "my_app_latency_milliseconds_total",
 		Help: "Histogram with my-app latency milliseconds (v1.0.0)",

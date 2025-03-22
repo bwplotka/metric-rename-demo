@@ -1,6 +1,12 @@
 # Versioned Write
 # The goal is to have relabel rules to copy to support "1.0.0" translated to "1.1.0"
 relabel_configs:
+        # TODO(bwplotka): Relabel labels if we find change (has to be fixed in weaver first)
+# action defaults to 'replace'
+- source_labels: __name__
+  regex: "my_app_custom_elements_total"
+  target_label: __name__
+  replacement: "my_app_custom_elements_changed_total"
 # TODO: continue
         # TODO(bwplotka): Relabel labels if we find change (has to be fixed in weaver first)
 # action defaults to 'replace'
@@ -8,10 +14,4 @@ relabel_configs:
   regex: "my_app_latency_milliseconds_total"
   target_label: __name__
   replacement: "my_app_latency_seconds_total"
-        # TODO(bwplotka): Relabel labels if we find change (has to be fixed in weaver first)
-# action defaults to 'replace'
-- source_labels: __name__
-  regex: "my_app_custom_elements_total"
-  target_label: __name__
-  replacement: "my_app_custom_elements_changed_total"
 

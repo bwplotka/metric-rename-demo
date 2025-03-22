@@ -24,11 +24,12 @@
         "type": "updated"
       },
       {
-        "name": "my_app_latency_seconds_total~seconds.histogram",
-        "type": "added"
+        "name": "my_app_some_elements_total~gauge",
+        "note": "Not useful anymore",
+        "type": "obsoleted"
       },
       {
-        "name": "my_app_custom_elements_changed_total~counter",
+        "name": "my_app_latency_seconds_total~seconds.histogram",
         "type": "added"
       },
       {
@@ -56,9 +57,8 @@
         "type": "updated"
       },
       {
-        "name": "my_app_some_elements_total~gauge",
-        "note": "Not useful anymore",
-        "type": "obsoleted"
+        "name": "my_app_custom_elements_changed_total~counter",
+        "type": "added"
       }
     ],
     "registry_attributes": [],
