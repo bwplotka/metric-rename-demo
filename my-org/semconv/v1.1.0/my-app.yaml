@@ -1,54 +1,64 @@
 # Schema: https://github.com/open-telemetry/weaver/blob/main/schemas/semconv.schema.json with --simple mode.
 groups:
-- id: "my_app_latency_seconds_total~seconds.histogram"
+- id: "my_app_latency.2"
   type: metric
-  brief: "Histogram with my-app latency seconds (v1.1.0)"
+  metric_name: my_app_latency_seconds_total # Last change in v1.1.0.
+  unit: "{seconds}" # Last change in v1.1.0.
+  instrument: "histogram"
+  brief: "Histogram with my-app latency seconds (v1.1.0)" # Last change in v1.1.0.
   attributes:
   - id: code
     type: int
     brief: "HTTP status code."
-- id: "my_app_custom_elements_changed_total~counter"
+- id: "my_app_custom_elements.2"
   type: metric
-  brief: "Custom counter metric (v1.1.0) for my app counting important elements. It serves as an example of a very important metric that everyone is using. Replacement to my_app_custom_elements_total~counter"
+  metric_name: my_app_custom_elements_changed_total # Last change in v1.1.0.
+  instrument: "counter"
+  brief: "Custom counter metric (v1.1.0) for my app counting important elements. It serves as an example of a very important metric that everyone is using. Replacement to my_app_custom_elements_total~counter" # Last change in v1.1.0.
   attributes:
-  - id: integer
-    tag: "number"
+  - id: "integer"
+    tag: "number" # Last change in v1.1.0.
     type: int
     brief: "Important label that specifies the integer for this count."
-  - id: category
-    tag: "class"
+  - id: "category"
+    tag: "class" # Last change in v1.1.0.
     type:
       members:
-      - id: first
-        value: "FIRST"
-      - id: second
-        value: "SECOND"
-      - id: other
-        value: "OTHER"
+      - id: "first"
+        value: "FIRST" # Last change in v1.1.0.
+      - id: "second"
+        value: "SECOND" # Last change in v1.1.0.
+      - id: "other"
+        value: "OTHER" # Last change in v1.1.0.
     brief: "Important label that specifies the category for this count."
   - id: "fraction"
     type: double
     brief: "This is an important label that specifies the fraction for this count."
-# Deprecated (replaced) metrics.
-- id: "my_app_latency_milliseconds_total~milliseconds.histogram"
+### Deprecated elements.
+- id: "my_app_latency"
   type: metric
+  metric_name: my_app_latency_milliseconds_total
+  unit: "{milliseconds}"
+  instrument: "histogram"
   brief: "Histogram with my-app latency milliseconds (v1.0.0)"
   deprecated:
     reason: updated
     note: "Ups, we did not use base unit, our bad. This metric should be auto-transformable, see diff for all changes."
-    replaced_by_id: "my_app_latency_seconds_total~seconds.histogram"
+    replaced_by_id: "my_app_latency.2"
     forward_promql: "$old / 1000"
     backward_promql: "$new * 1000"
   attributes:
   - id: code
     type: int
     brief: "HTTP status code."
-- id: "my_app_custom_elements_total~counter"
+- id: "my_app_custom_elements"
   type: metric
+  metric_name: my_app_custom_elements_total
+  instrument: "counter"
   brief: "Custom counter metric (v1.0.0) for my app counting important elements. It serves as an example of a very important metric that everyone is using."
   deprecated:
     reason: updated
-    replaced_by_id: "my_app_custom_elements_changed_total~counter"
+    replaced_by_id: "my_app_custom_elements"
     note: "We didn't like the old name sorry. This metric should be auto-transformable, see diff for all changes."
   attributes:
   - id: "integer"
@@ -64,9 +74,10 @@ groups:
   - id: "fraction"
     type: double
     brief: "This is an important label that specifies the fraction for this count."
-# Deprecated, no replacement.
-- id: "my_app_some_elements_total~gauge"
+- id: "my_app_some_elements"
   type: metric
+  metric_name: my_app_some_elements_totals
+  instrument: "gauge"
   brief: "some metric"
   deprecated:
     reason: "obsoleted"

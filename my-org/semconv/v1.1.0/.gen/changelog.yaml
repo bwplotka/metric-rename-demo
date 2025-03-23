@@ -1,0 +1,47 @@
+# Version of this file.
+version: 1
+
+# changelog contains all changes made to elements with the same semantic id.
+changelog:
+  metrics:
+    my_app_latency:
+    - forward:
+        metric_name: my_app_latency_seconds_total
+        unit: "{seconds}"
+        value_promql: "$old / 1000"
+      backward:
+        metric_name: my_app_latency_milliseconds_total
+        unit: "{milliseconds}"
+        value_promql: "$new * 1000"
+
+    my_app_custom_elements:
+    - forward:
+        metric_name: my_app_custom_elements_changed_total
+        attribute:
+        - id: "integer"
+          tag: "number"
+        - id: "category"
+          tag: "class"
+          members:
+          - id: "first"
+            value: "FIRST"
+          - id: "second"
+            value: "SECOND"
+          - id: "other"
+            value: "OTHER"
+      backward:
+        metric_name: my_app_custom_elements_total
+        attribute:
+        - id: "integer"
+          tag: "integer"
+        - id: "category"
+          tag: "category"
+          members:
+          - id: "first"
+            value: "first"
+          - id: "second"
+            value: "second"
+          - id: "other"
+            value: "other"
+
+    my_app_some_elements_totals:
