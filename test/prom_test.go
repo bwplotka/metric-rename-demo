@@ -3,7 +3,6 @@ package test
 import (
 	"context"
 	"fmt"
-	"net/url"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -22,7 +21,7 @@ const (
 	myAppImage = "quay.io/bwplotka/my-app:latest"
 
 	// Prometheus built from "rename-kubecon" branch.
-	promImage = "quay.io/bwplotka/prometheus:semconv-v1.1"
+	promImage = "quay.io/bwplotka/prometheus:semconv-v1.2"
 )
 
 // Requires make docker DOCKER_TAG=latest before starting.
@@ -83,7 +82,7 @@ func TestMyApp_PrometheusWriting(t *testing.T) {
 	}, nil)
 	testutil.Ok(t, e2e.StartAndWaitReady(prom))
 
-	testutil.Ok(t, e2einteractive.OpenInBrowser("http://"+prom.Endpoint("http")+url.QueryEscape(`/query?g0.expr=histogram_quantile%28%0A++0.9%2C%0A++sum+by+%28le%2C+job%2C+code%29+%28%0A++++rate%28%0A++++++my_app_latency_seconds_total_bucket%7B__schema_url__%3D"https%3A%2F%2Fraw.githubusercontent.com%2Fbwplotka%2Fmetric-rename-demo%2Frefs%2Fheads%2Fdiff%2Fmy-org%2Fsemconv%2Fv1.1.0"%7D%5B1m%5D%0A++++%29%0A++%29%0A%29&g0.show_tree=0&g0.tab=table&g0.range_input=1h&g0.res_type=auto&g0.res_density=medium&g0.display_mode=lines&g0.show_exemplars=0&g1.expr=my_app_custom_elements_total%7B__schema_url__%3D"https%3A%2F%2Fraw.githubusercontent.com%2Fbwplotka%2Fmetric-rename-demo%2Frefs%2Fheads%2Fdiff%2Fmy-org%2Fsemconv%2Fv1.0.0"%7D&g1.show_tree=0&g1.tab=table&g1.range_input=1h&g1.res_type=auto&g1.res_density=medium&g1.display_mode=lines&g1.show_exemplars=0`)))
+	testutil.Ok(t, e2einteractive.OpenInBrowser("http://"+prom.Endpoint("http")+`/query?g0.expr=histogram_quantile%28%0A++0.9%2C%0A++sum+by+%28le%2C+job%2C+code%29+%28%0A++++rate%28%0A++++++my_app_latency_seconds_total_bucket%7B__schema_url__%3D"https%3A%2F%2Fraw.githubusercontent.com%2Fbwplotka%2Fmetric-rename-demo%2Frefs%2Fheads%2Fdiff%2Fmy-org%2Fsemconv%2Fv1.1.0"%7D%5B1m%5D%0A++++%29%0A++%29%0A%29&g0.show_tree=0&g0.tab=table&g0.range_input=1h&g0.res_type=auto&g0.res_density=medium&g0.display_mode=lines&g0.show_exemplars=0&g1.expr=my_app_custom_elements_total%7B__schema_url__%3D"https%3A%2F%2Fraw.githubusercontent.com%2Fbwplotka%2Fmetric-rename-demo%2Frefs%2Fheads%2Fdiff%2Fmy-org%2Fsemconv%2Fv1.0.0"%7D&g1.show_tree=0&g1.tab=table&g1.range_input=1h&g1.res_type=auto&g1.res_density=medium&g1.display_mode=lines&g1.show_exemplars=0`))
 	testutil.Ok(t, e2einteractive.RunUntilEndpointHit())
 }
 
@@ -128,7 +127,7 @@ scrape_configs:
 - job_name: 'my-app'
   scrape_interval: 5s
   scrape_timeout: 5s
-	convert_classic_histograms_to_nhcb: true
+  convert_classic_histograms_to_nhcb: true
   static_configs:
   - targets: [%v]
 `, name, f.InternalEndpoint("http"), strings.Join(scrapeAddrs, ","))

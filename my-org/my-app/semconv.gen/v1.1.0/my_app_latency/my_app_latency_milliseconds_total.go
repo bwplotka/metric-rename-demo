@@ -30,7 +30,7 @@ func MustNewMyAppLatencyMillisecondsTotal(reg prometheus.Registerer) *MyAppLaten
 		Help: "Histogram with my-app latency milliseconds (v1.0.0)",
 		// Unit: "{milliseconds}" // TODO(bwplotka): Add Unit as one of the supported options.
 		ConstLabels: map[string]string{
-			"__schema_url__": "https://raw.githubusercontent.com/bwplotka/metric-rename-demo/refs/heads/diff/my-org/semconv/v1.1.0",
+			"__schema_url__": "https://bwplotka.dev/semconv/v1.1.0",
 			"__unit__": "milliseconds", // Tmp hack until client_golang has unit.
 		},
 	}, []string{

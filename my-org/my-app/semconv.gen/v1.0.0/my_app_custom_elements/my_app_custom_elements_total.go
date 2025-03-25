@@ -36,7 +36,7 @@ func MustNewMyAppCustomElementsTotal(reg prometheus.Registerer) *MyAppCustomElem
 		Help: "Custom counter metric (v1.0.0) for my app counting important elements. It serves as an example of a very important metric that everyone is using.",
 		// Unit: "{unknown}" // TODO(bwplotka): Add Unit as one of the supported options.
 		ConstLabels: map[string]string{
-			"__schema_url__": "https://raw.githubusercontent.com/bwplotka/metric-rename-demo/refs/heads/diff/my-org/semconv/v1.0.0",
+			"__schema_url__": "https://bwplotka.dev/semconv/v1.0.0",
 		},
 	}, []string{
 		// Important label that specifies the integer for this count.

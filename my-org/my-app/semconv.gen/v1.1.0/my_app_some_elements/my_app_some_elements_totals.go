@@ -28,7 +28,7 @@ func MustNewMyAppSomeElementsTotals(reg prometheus.Registerer) prometheus.Gauge 
 		Help: "some metric",
 		// Unit: "{unknown}" // TODO(bwplotka): Add Unit as one of the supported options.
 		ConstLabels: map[string]string{
-			"__schema_url__": "https://raw.githubusercontent.com/bwplotka/metric-rename-demo/refs/heads/diff/my-org/semconv/v1.1.0",
+			"__schema_url__": "https://bwplotka.dev/semconv/v1.1.0",
 		},
 	})
 }
