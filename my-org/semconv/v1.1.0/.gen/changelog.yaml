@@ -17,30 +17,20 @@ metrics_changelog:
   - forward:
       metric_name: my_app_custom_elements_changed_total
       attributes:
-      - id: "integer"
-        tag: "number"
-      - id: "category"
-        tag: "class"
+      - tag: "number"
+      - tag: "class"
         members:
-        - id: "first"
-          value: "FIRST"
-        - id: "second"
-          value: "SECOND"
-        - id: "other"
-          value: "OTHER"
+        - value: "FIRST"
+        - value: "SECOND"
+        - value: "OTHER"
     backward:
       metric_name: my_app_custom_elements_total
       attributes:
-      - id: "integer"
-        tag: "integer"
-      - id: "category"
-        tag: "category"
+      - tag: "integer"
+      - tag: "category"
         members:
-        - id: "first"
-          value: "first"
-        - id: "second"
-          value: "second"
-        - id: "other"
-          value: "other"
+        - value: "first"
+        - value: "second"
+        - value: "other"
 
   my_app_some_elements_totals:

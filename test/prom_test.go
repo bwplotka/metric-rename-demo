@@ -1,20 +1,27 @@
 package test
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"path/filepath"
 	"strconv"
 	"strings"
+	"sync"
 	"testing"
+	"time"
 
 	"github.com/efficientgo/core/testutil"
 	"github.com/efficientgo/e2e"
+	e2einteractive "github.com/efficientgo/e2e/interactive"
 	e2emon "github.com/efficientgo/e2e/monitoring"
 )
 
 const (
 	myAppImage = "quay.io/bwplotka/my-app:latest"
+
+	// Prometheus built from "rename-kubecon" branch.
+	promImage = "quay.io/bwplotka/prometheus:semconv-v1"
 )
 
 // Requires make docker DOCKER_TAG=latest before starting.
@@ -23,32 +30,60 @@ func TestMyApp_PrometheusWriting(t *testing.T) {
 	t.Cleanup(e.Close)
 	testutil.Ok(t, err)
 
+	schemaVersions := [2]string{
+		"generated@v1.0.0",
+		"generated@v1.1.0",
+	}
+
 	// Create my-app-new containers. One creating metrics from , second from
-	myApp := newMyApp(e, "my-app-v1.0.0-metrics", myAppImage, map[string]string{"-metric-source": "generated@v1.0.0"})
-	myApp2 := newMyApp(e, "my-app-v1.1.0-metrics", myAppImage, map[string]string{"-metric-source": "generated@v1.1.0"})
+	myApp := newMyApp(e, "my-app-v1.0.0-metrics", myAppImage, map[string]string{"-metric-source": schemaVersions[0]})
+	myApp2 := newMyApp(e, "my-app-v1.1.0-metrics", myAppImage, map[string]string{"-metric-source": schemaVersions[1]})
+	testutil.Ok(t, e2e.StartAndWaitReady(myApp, myApp2))
 
-	// Prometheus built from "rename-kubecon" branch.
-	prom := newPrometheus(e, "prom-1", "quay.io/bwplotka/prometheus:rename-kubecon-v1", []string{myApp.InternalEndpoint("http"), myApp2.InternalEndpoint("http")}, nil)
-	testutil.Ok(t, e2e.StartAndWaitReady(myApp, myApp2, prom))
+	// Create a go routine that switches runnables under a single name for different versions.
+	switchInterval := 5 * time.Minute
+	activeSchemaVersion := 0
+	myAppSwitching := newMyApp(e, "my-app", myAppImage, map[string]string{"-metric-source": schemaVersions[activeSchemaVersion]})
+	testutil.Ok(t, e2e.StartAndWaitReady(myAppSwitching))
+	{
+		var wg sync.WaitGroup
+		ctx, cancel := context.WithCancel(context.TODO())
+		e.AddCloser(func() {
+			cancel()
+			wg.Wait()
+		})
 
-	//const expectSamples float64 = 2e3
-	//
-	//testutil.Ok(t, prom.WaitSumMetricsWithOptions(
-	//	e2emon.Greater(expectSamples), []string{"prometheus_remote_storage_samples_total"},
-	//	e2emon.WithLabelMatchers(&matchers.Matcher{Name: "remote_name", Value: "v2-to-sink", Type: matchers.MatchEqual}),
-	//	e2emon.WithWaitBackoff(&backoff.Config{Min: 1 * time.Second, Max: 1 * time.Second, MaxRetries: 300}), // Wait 5m max.
-	//))
-	//testutil.Ok(t, prom.WaitSumMetricsWithOptions(
-	//	e2emon.Greater(expectSamples), []string{"prometheus_remote_storage_samples_total"},
-	//	e2emon.WithLabelMatchers(&matchers.Matcher{Name: "remote_name", Value: "v1-to-sink", Type: matchers.MatchEqual}),
-	//))
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
 
-	// Uncomment for the interactive run (test will run until you kill the test or hit endpoint that was logged)
-	// so you can explore Prometheus UI and sink metrics.
-	//testutil.Ok(t, e2einteractive.OpenInBrowser("http://"+prom.Endpoint("http"))) // Open Prometheus UI
-	//testutil.Ok(t, e2einteractive.OpenInBrowser("http://"+sink.Endpoint("http")+"/metrics"))
-	//testutil.Ok(t, e2einteractive.RunUntilEndpointHit())
+			for {
+				select {
+				case <-ctx.Done():
+					// Env will close the app.
+					return
+				case <-time.After(switchInterval):
+					testutil.Ok(t, myAppSwitching.Stop())
 
+					activeSchemaVersion = (activeSchemaVersion + 1) % 2
+
+					// Must be same name for InternalEndpoint to stay consistent!
+					myAppSwitching = newMyApp(e, "my-app", myAppImage, map[string]string{"-metric-source": schemaVersions[activeSchemaVersion]})
+					testutil.Ok(t, e2e.StartAndWaitReady(myAppSwitching))
+				}
+			}
+		}()
+	}
+
+	prom := newPrometheus(e, "prom-1", promImage, []string{
+		myApp.InternalEndpoint("http"),
+		myApp2.InternalEndpoint("http"),
+		myAppSwitching.InternalEndpoint("http"),
+	}, nil)
+	testutil.Ok(t, e2e.StartAndWaitReady(prom))
+
+	testutil.Ok(t, e2einteractive.OpenInBrowser("http://"+prom.Endpoint("http")))
+	testutil.Ok(t, e2einteractive.RunUntilEndpointHit())
 }
 
 func newMyApp(e e2e.Environment, name, image string, flagOverride map[string]string) *e2emon.InstrumentedRunnable {
@@ -80,6 +115,11 @@ global:
     prometheus: %v
 scrape_configs:
 - job_name: 'self'
+  scrape_interval: 5s
+  scrape_timeout: 5s
+  static_configs:
+  - targets: [%v]
+- job_name: 'my-app'
   scrape_interval: 5s
   scrape_timeout: 5s
   static_configs:
