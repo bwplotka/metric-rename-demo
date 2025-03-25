@@ -10,10 +10,11 @@ import (
 	"syscall"
 	"time"
 
-	elements_v100 "github.com/bwplotka/metric-rename-demo/my-org/my-app/semconv.gen/v1.0.0/my_app_custom_elements_total"
-	elements_changed_v110 "github.com/bwplotka/metric-rename-demo/my-org/my-app/semconv.gen/v1.1.0/my_app_custom_elements_changed_total"
-	latency_millis_v100 "github.com/bwplotka/metric-rename-demo/my-org/my-app/semconv.gen/v1.0.0/my_app_latency_milliseconds_total"
-	my_app_latency "github.com/bwplotka/metric-rename-demo/my-org/my-app/semconv.gen/v1.1.0/my_app_latency"
+	"github.com/bwplotka/metric-rename-demo/my-org/my-app/semconv.gen/v1.0.0/my_app_custom_elements"
+	"github.com/bwplotka/metric-rename-demo/my-org/my-app/semconv.gen/v1.1.0/my_app_custom_elements/2"
+
+	"github.com/bwplotka/metric-rename-demo/my-org/my-app/semconv.gen/v1.1.0/my_app_latency"
+	"github.com/bwplotka/metric-rename-demo/my-org/my-app/semconv.gen/v1.1.0/my_app_latency/2"
 
 	"github.com/nelkinda/health-go"
 	"github.com/oklog/run"
@@ -22,6 +23,11 @@ import (
 	"github.com/prometheus/client_golang/prometheus/promauto"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
+
+func init() {
+	// Hack for demo purposes. Long term schema and unit should be part of the API.
+	prometheus.AllowReservedLabels = true
+}
 
 func main() {
 	addrFlag := flag.String("listen-address", ":9011", "Address to listen on. Available HTTP paths: /metrics")
@@ -48,14 +54,14 @@ func main() {
 
 		// Notice the type safety of generated code below vs manual above.
 	case "generated@v1.0.0":
-		elementsCount = elements_v100.MustNewCounterVec(reg).
-			WithLabelValues(100, elements_v100.FirstCategory, 1.2414)
+		elementsCount = my_app_custom_elements.MustNewMyAppCustomElementsTotal(reg).
+			WithLabelValues(100, my_app_custom_elements.FirstCategory, 1.2414)
 		latency = my_app_latency.MustNewMyAppLatencyMillisecondsTotal(reg).
 			WithLabelValues(200)
 	case "generated@v1.1.0":
-		elementsCount = elements_changed_v110.MustNewCounterVec(reg).
-			WithLabelValues(100, elements_changed_v110.FirstClass, 1.2414)
-		latency = my_app_latency.MustNewMyAppLatencySecondsTotalV2(reg).
+		elementsCount = my_app_custom_elements_2.MustNewMyAppCustomElementsChangedTotal(reg).
+			WithLabelValues(100, my_app_custom_elements_2.FirstClass, 1.2414)
+		latency = my_app_latency_2.MustNewMyAppLatencySecondsTotal(reg).
 			WithLabelValues(200)
 	default:
 		log.Fatalf("unknown -metric-source source, got %v", *metricDefinition)

@@ -6,6 +6,15 @@
     "events": [],
     "metrics": [
       {
+        "name": "my_app_latency.2",
+        "type": "added"
+      },
+      {
+        "name": "my_app_some_elements",
+        "note": "Not useful anymore",
+        "type": "obsoleted"
+      },
+      {
         "backward_promql": "$new * 1000",
         "fields": {
           "metric_name": {
@@ -24,23 +33,32 @@
         "type": "updated"
       },
       {
-        "name": "my_app_latency.2",
-        "type": "added"
-      },
-      {
-        "name": "my_app_some_elements",
-        "note": "Not useful anymore",
-        "type": "obsoleted"
-      },
-      {
-        "id": "my_app_custom_elements",
-        "note": "We didn\u0027t like the old name sorry. This metric should be auto-transformable, see diff for all changes.",
-        "replaced_by_id": "my_app_custom_elements",
-        "type": "updated"
-      },
-      {
         "name": "my_app_custom_elements.2",
         "type": "added"
+      },
+      {
+        "attributes": {
+          "category": {
+            "new_name": "class",
+            "old_name": "category",
+            "type": "renamed"
+          },
+          "integer": {
+            "new_name": "number",
+            "old_name": "integer",
+            "type": "renamed"
+          }
+        },
+        "fields": {
+          "metric_name": {
+            "new_name": "my_app_custom_elements_changed_total",
+            "old_name": "my_app_custom_elements_total"
+          }
+        },
+        "id": "my_app_custom_elements",
+        "note": "We didn\u0027t like the old name sorry. This metric should be auto-transformable, see diff for all changes.",
+        "replaced_by_id": "my_app_custom_elements.2",
+        "type": "updated"
       }
     ],
     "registry_attributes": [],

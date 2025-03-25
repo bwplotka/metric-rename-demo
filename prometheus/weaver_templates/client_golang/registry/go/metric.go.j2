@@ -1,12 +1,11 @@
 {%- if ctx.id.split('.')[-1].isalnum() -%}
-	{%- set revision = "V" ~ ctx.id.split('.')[-1] %}
-	{%- set package_name = ctx.id.split('.')[:-1] | join('.') | lower | snake_case  -%}
-	{%- set my_file_name = package_name ~ "/" ~ ctx.id | lower | snake_case ~ ".go" -%}
+	{%- set revision = ctx.id.split('.')[-1] | lower | snake_case %}
+	{%- set semantic_id = ctx.id.split('.')[:-1] | join('.') | lower | snake_case -%}
+	{%- set my_file_name = semantic_id ~ "/" ~ revision ~ "/" ~ ctx.metric_name | lower | snake_case ~ ".go" -%}
 {%- else -%}
-	{%- set revision = "" %}
-	{%- set package_name = ctx.id | lower | snake_case  -%}
-	{%- set my_file_name = package_name ~ "/" ~ ctx.id | lower | snake_case ~ ".go" -%}
+	{%- set my_file_name = ctx.id | lower | snake_case  ~ "/" ~ ctx.metric_name | lower | snake_case ~ ".go" -%}
 {%- endif -%}
+{%- set package_name = ctx.id | lower | snake_case -%}
 {{- template.set_file_name(my_file_name) -}}
 {%- set instrToVecTypes = {
 	'histogram': "HistogramVec",
@@ -62,12 +61,11 @@ import (
 {%- for label in ctx.attributes -%}
 	{%- if label.type.members is defined %}
 
-// TODO(bwplotka): Detect changes and not add V2 prefix if no change was made?
-type {{ label.tag | pascal_case ~ revision }} string
+type {{ label.tag | pascal_case }} string
 
 const (
 	{%- for value in label.type.members %}
-		{{ value.id | pascal_case ~  label.tag | pascal_case ~ revision }} {{ label.tag | pascal_case ~ revision }} = "{{ value.value }}"
+		{{ value.id | pascal_case ~  label.tag | pascal_case }} {{ label.tag | pascal_case }} = "{{ value.value }}"
 	{%- endfor %}
 )
 	{%- endif %}
@@ -75,15 +73,18 @@ const (
 
 // MustNew returns {{ ctx.id }}.
 {%- if ctx.deprecated is defined  %}
-// Deprecated: {{ ctx.deprecated }}
+	{%- if ctx.deprecated.updated is defined  %}
+// Deprecated: Use {{ ctx.deprecated.updated.replaced_by_id | lower | snake_case }} instead.
+// Note: {{ ctx.deprecated }}
+	{%- else %}
+// Deprecated {{ ctx.deprecated }}
+	{%- endif %}
 {%- endif %}
 
+{%- set type_name = ctx.metric_name | lower | pascal_case %}
 {%- if ctx.attributes is defined and ctx.attributes | length > 0 %}
-	{%- set typeName = ctx.metric_name ~ instrToVecTypes[ctx.instrument] ~ revision %}
-func MustNew{{ ctx.metric_name | pascal_case ~ revision }}(reg prometheus.Registerer) *{{ typeName }} {
-	reg = prometheus.WrapRegistererWith(prometheus.Labels{"__schema_url__": "{{ params.schema_url }}"}, reg)
-
-	return &{{ typeName }}{promauto.With(reg).New{{ instrToVecTypes[ctx.instrument] }}(prometheus.{{ instrToOptTypes[ctx.instrument] }}{
+func MustNew{{ type_name }}(reg prometheus.Registerer) *{{ type_name }} {
+	return &{{ type_name }}{promauto.With(reg).New{{ instrToVecTypes[ctx.instrument] }}(prometheus.{{ instrToOptTypes[ctx.instrument] }}{
 		Name: "{{ ctx.metric_name }}",
 		{% if ctx.note is defined -%}
 		Help: "{{ ctx.note }}",
@@ -91,6 +92,12 @@ func MustNew{{ ctx.metric_name | pascal_case ~ revision }}(reg prometheus.Regist
 		Help: "{{ ctx.brief }}",
 		{%- endif %}
 		// Unit: "{{ ctx.unit }}" // TODO(bwplotka): Add Unit as one of the supported options.
+		ConstLabels: map[string]string{
+			"__schema_url__": "{{ params.schema_url }}",
+		{%- if ctx.unit is defined and ctx.unit != "{unknown}" %}
+			"__unit__": "{{ ctx.unit | replace("{", "") | replace("}", "")  }}", // Tmp hack until client_golang has unit.
+		{%- endif %}
+		},
 	}, []string{
 {%- for label in ctx.attributes %}
 		// {{ label.brief }}
@@ -99,11 +106,11 @@ func MustNew{{ ctx.metric_name | pascal_case ~ revision }}(reg prometheus.Regist
 	})}
 }
 
-type {{ typeName }} struct {
+type {{ type_name }} struct {
 	*prometheus.{{ instrToVecTypes[ctx.instrument] }}
 }
 
-func (x *{{ typeName }}) WithLabelValues(
+func (x *{{ type_name }}) WithLabelValues(
 {%- for label in ctx.attributes %}
 	{%- if label.type.members is defined %}
 	{{label.tag}} {{ label.tag | pascal_case }},
@@ -121,9 +128,7 @@ func (x *{{ typeName }}) WithLabelValues(
 	)
 }
 {%- else %}
-func MustNew{{ ctx.metric_name ~ revision }}(reg prometheus.Registerer) prometheus.{{ instrToTypes[ctx.instrument] }} {
-	reg = prometheus.WrapRegistererWith(prometheus.Labels{"__schema_url__": "{{ params.schema_url }}"}, reg)
-
+func MustNew{{ type_name }}(reg prometheus.Registerer) prometheus.{{ instrToTypes[ctx.instrument] }} {
 	return promauto.With(reg).New{{ instrToTypes[ctx.instrument] }}(prometheus.{{ instrToOptTypes[ctx.instrument] }}{
 		Name: "{{ ctx.metric_name }}",
 		{% if ctx.note is defined -%}
@@ -132,6 +137,12 @@ func MustNew{{ ctx.metric_name ~ revision }}(reg prometheus.Registerer) promethe
 		Help: "{{ ctx.brief }}",
 		{%- endif %}
 		// Unit: "{{ ctx.unit }}" // TODO(bwplotka): Add Unit as one of the supported options.
+		ConstLabels: map[string]string{
+			"__schema_url__": "{{ params.schema_url }}",
+		{%- if ctx.unit is defined and ctx.unit != "{unknown}" %}
+			"__unit__": "{{ ctx.unit | replace("{", "") | replace("}", "")  }}", // Tmp hack until client_golang has unit.
+		{%- endif %}
+		},
 	})
 }
 {%- endif %}

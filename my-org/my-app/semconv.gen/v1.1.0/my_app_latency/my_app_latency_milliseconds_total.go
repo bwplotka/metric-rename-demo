@@ -22,25 +22,28 @@ import (
 )
 
 // MustNew returns my_app_latency.
-// Deprecated: {"updated": {"backward_promql": "$new * 1000", "forward_promql": "$old / 1000", "note": "Ups, we did not use base unit, our bad. This metric should be auto-transformable, see diff for all changes.", "replaced_by_id": "my_app_latency.2"}}
-func MustNewMyAppLatencyMillisecondsTotal(reg prometheus.Registerer) *my_app_latency_milliseconds_totalHistogramVec {
-	reg = prometheus.WrapRegistererWith(prometheus.Labels{"__schema_url__": "https://github.com/bwplotka/metric-rename-demo/tree/main/my-org/semconv/v1.1.0"}, reg)
-
-	return &my_app_latency_milliseconds_totalHistogramVec{promauto.With(reg).NewHistogramVec(prometheus.HistogramOpts{
+// Deprecated: Use my_app_latency_2 instead.
+// Note: {"updated": {"backward_promql": "$new * 1000", "forward_promql": "$old / 1000", "note": "Ups, we did not use base unit, our bad. This metric should be auto-transformable, see diff for all changes.", "replaced_by_id": "my_app_latency.2"}}
+func MustNewMyAppLatencyMillisecondsTotal(reg prometheus.Registerer) *MyAppLatencyMillisecondsTotal {
+	return &MyAppLatencyMillisecondsTotal{promauto.With(reg).NewHistogramVec(prometheus.HistogramOpts{
 		Name: "my_app_latency_milliseconds_total",
 		Help: "Histogram with my-app latency milliseconds (v1.0.0)",
 		// Unit: "{milliseconds}" // TODO(bwplotka): Add Unit as one of the supported options.
+		ConstLabels: map[string]string{
+			"__schema_url__": "https://github.com/bwplotka/metric-rename-demo/tree/main/my-org/semconv/v1.1.0",
+			"__unit__": "milliseconds", // Tmp hack until client_golang has unit.
+		},
 	}, []string{
 		// HTTP status code.
 		"code",
 	})}
 }
 
-type my_app_latency_milliseconds_totalHistogramVec struct {
+type MyAppLatencyMillisecondsTotal struct {
 	*prometheus.HistogramVec
 }
 
-func (x *my_app_latency_milliseconds_totalHistogramVec) WithLabelValues(
+func (x *MyAppLatencyMillisecondsTotal) WithLabelValues(
 	code int,
 ) prometheus.Observer {
 	// TODO(bwplotka): This is actually not ideal for efficiency reasons (type conversions to string).

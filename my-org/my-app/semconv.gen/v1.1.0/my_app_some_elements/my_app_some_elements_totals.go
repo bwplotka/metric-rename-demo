@@ -21,13 +21,15 @@ import (
 )
 
 // MustNew returns my_app_some_elements.
-func MustNewmy_app_some_elements_totals(reg prometheus.Registerer) prometheus.Gauge {
-	reg = prometheus.WrapRegistererWith(prometheus.Labels{"__schema_url__": "https://github.com/bwplotka/metric-rename-demo/tree/main/my-org/semconv/v1.0.0"}, reg)
-
+// Deprecated {"obsoleted": {"note": "Not useful anymore"}}
+func MustNewMyAppSomeElementsTotals(reg prometheus.Registerer) prometheus.Gauge {
 	return promauto.With(reg).NewGauge(prometheus.GaugeOpts{
 		Name: "my_app_some_elements_totals",
 		Help: "some metric",
 		// Unit: "{unknown}" // TODO(bwplotka): Add Unit as one of the supported options.
+		ConstLabels: map[string]string{
+			"__schema_url__": "https://github.com/bwplotka/metric-rename-demo/tree/main/my-org/semconv/v1.1.0",
+		},
 	})
 }
 

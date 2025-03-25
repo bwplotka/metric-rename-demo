@@ -13,7 +13,7 @@
 
 // Code generated from semantic convention specification. DO NOT EDIT.
 
-package my_app_latency
+package my_app_latency_2
 
 import (
 	"fmt"
@@ -21,25 +21,27 @@ import (
 	"github.com/prometheus/client_golang/prometheus/promauto"
 )
 
-// MustNew returns my_app_latency.
-func MustNewMyAppLatencyMillisecondsTotal(reg prometheus.Registerer) *my_app_latency_milliseconds_totalHistogramVec {
-	reg = prometheus.WrapRegistererWith(prometheus.Labels{"__schema_url__": "https://github.com/bwplotka/metric-rename-demo/tree/main/my-org/semconv/v1.0.0"}, reg)
-
-	return &my_app_latency_milliseconds_totalHistogramVec{promauto.With(reg).NewHistogramVec(prometheus.HistogramOpts{
-		Name: "my_app_latency_milliseconds_total",
-		Help: "Histogram with my-app latency milliseconds (v1.0.0)",
-		// Unit: "{milliseconds}" // TODO(bwplotka): Add Unit as one of the supported options.
+// MustNew returns my_app_latency.2.
+func MustNewMyAppLatencySecondsTotal(reg prometheus.Registerer) *MyAppLatencySecondsTotal {
+	return &MyAppLatencySecondsTotal{promauto.With(reg).NewHistogramVec(prometheus.HistogramOpts{
+		Name: "my_app_latency_seconds_total",
+		Help: "Histogram with my-app latency seconds (v1.1.0)",
+		// Unit: "{seconds}" // TODO(bwplotka): Add Unit as one of the supported options.
+		ConstLabels: map[string]string{
+			"__schema_url__": "https://github.com/bwplotka/metric-rename-demo/tree/main/my-org/semconv/v1.1.0",
+			"__unit__": "seconds", // Tmp hack until client_golang has unit.
+		},
 	}, []string{
 		// HTTP status code.
 		"code",
 	})}
 }
 
-type my_app_latency_milliseconds_totalHistogramVec struct {
+type MyAppLatencySecondsTotal struct {
 	*prometheus.HistogramVec
 }
 
-func (x *my_app_latency_milliseconds_totalHistogramVec) WithLabelValues(
+func (x *MyAppLatencySecondsTotal) WithLabelValues(
 	code int,
 ) prometheus.Observer {
 	// TODO(bwplotka): This is actually not ideal for efficiency reasons (type conversions to string).

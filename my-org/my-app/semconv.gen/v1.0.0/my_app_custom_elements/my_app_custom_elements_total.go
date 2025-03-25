@@ -21,7 +21,6 @@ import (
 	"github.com/prometheus/client_golang/prometheus/promauto"
 )
 
-// TODO(bwplotka): Detect changes and not add V2 prefix if no change was made?
 type Category string
 
 const (
@@ -31,14 +30,14 @@ const (
 )
 
 // MustNew returns my_app_custom_elements.
-// Deprecated: {"updated": {"backward_promql": none, "forward_promql": none, "note": "We didn't like the old name sorry. This metric should be auto-transformable, see diff for all changes.", "replaced_by_id": "my_app_custom_elements"}}
-func MustNewMyAppCustomElementsTotal(reg prometheus.Registerer) *my_app_custom_elements_totalCounterVec {
-	reg = prometheus.WrapRegistererWith(prometheus.Labels{"__schema_url__": "https://github.com/bwplotka/metric-rename-demo/tree/main/my-org/semconv/v1.1.0"}, reg)
-
-	return &my_app_custom_elements_totalCounterVec{promauto.With(reg).NewCounterVec(prometheus.CounterOpts{
+func MustNewMyAppCustomElementsTotal(reg prometheus.Registerer) *MyAppCustomElementsTotal {
+	return &MyAppCustomElementsTotal{promauto.With(reg).NewCounterVec(prometheus.CounterOpts{
 		Name: "my_app_custom_elements_total",
 		Help: "Custom counter metric (v1.0.0) for my app counting important elements. It serves as an example of a very important metric that everyone is using.",
 		// Unit: "{unknown}" // TODO(bwplotka): Add Unit as one of the supported options.
+		ConstLabels: map[string]string{
+			"__schema_url__": "https://github.com/bwplotka/metric-rename-demo/tree/main/my-org/semconv/v1.0.0",
+		},
 	}, []string{
 		// Important label that specifies the integer for this count.
 		"integer",
@@ -49,11 +48,11 @@ func MustNewMyAppCustomElementsTotal(reg prometheus.Registerer) *my_app_custom_e
 	})}
 }
 
-type my_app_custom_elements_totalCounterVec struct {
+type MyAppCustomElementsTotal struct {
 	*prometheus.CounterVec
 }
 
-func (x *my_app_custom_elements_totalCounterVec) WithLabelValues(
+func (x *MyAppCustomElementsTotal) WithLabelValues(
 	integer int,
 	category Category,
 	fraction float64,

@@ -13,7 +13,7 @@
 
 // Code generated from semantic convention specification. DO NOT EDIT.
 
-package my_app_custom_elements
+package my_app_custom_elements_2
 
 import (
 	"fmt"
@@ -21,47 +21,47 @@ import (
 	"github.com/prometheus/client_golang/prometheus/promauto"
 )
 
-// TODO(bwplotka): Detect changes and not add V2 prefix if no change was made?
-type Category string
+type Class string
 
 const (
-		FirstCategory Category = "first"
-		SecondCategory Category = "second"
-		OtherCategory Category = "other"
+		FirstClass Class = "FIRST"
+		SecondClass Class = "SECOND"
+		OtherClass Class = "OTHER"
 )
 
-// MustNew returns my_app_custom_elements.
-func MustNewMyAppCustomElementsTotal(reg prometheus.Registerer) *my_app_custom_elements_totalCounterVec {
-	reg = prometheus.WrapRegistererWith(prometheus.Labels{"__schema_url__": "https://github.com/bwplotka/metric-rename-demo/tree/main/my-org/semconv/v1.0.0"}, reg)
-
-	return &my_app_custom_elements_totalCounterVec{promauto.With(reg).NewCounterVec(prometheus.CounterOpts{
-		Name: "my_app_custom_elements_total",
-		Help: "Custom counter metric (v1.0.0) for my app counting important elements. It serves as an example of a very important metric that everyone is using.",
+// MustNew returns my_app_custom_elements.2.
+func MustNewMyAppCustomElementsChangedTotal(reg prometheus.Registerer) *MyAppCustomElementsChangedTotal {
+	return &MyAppCustomElementsChangedTotal{promauto.With(reg).NewCounterVec(prometheus.CounterOpts{
+		Name: "my_app_custom_elements_changed_total",
+		Help: "Custom counter metric (v1.1.0) for my app counting important elements. It serves as an example of a very important metric that everyone is using. Replacement to my_app_custom_elements_total~counter",
 		// Unit: "{unknown}" // TODO(bwplotka): Add Unit as one of the supported options.
+		ConstLabels: map[string]string{
+			"__schema_url__": "https://github.com/bwplotka/metric-rename-demo/tree/main/my-org/semconv/v1.1.0",
+		},
 	}, []string{
 		// Important label that specifies the integer for this count.
-		"integer",
+		"number",
 		// Important label that specifies the category for this count.
-		"category",
+		"class",
 		// This is an important label that specifies the fraction for this count.
 		"fraction",
 	})}
 }
 
-type my_app_custom_elements_totalCounterVec struct {
+type MyAppCustomElementsChangedTotal struct {
 	*prometheus.CounterVec
 }
 
-func (x *my_app_custom_elements_totalCounterVec) WithLabelValues(
-	integer int,
-	category Category,
+func (x *MyAppCustomElementsChangedTotal) WithLabelValues(
+	number int,
+	class Class,
 	fraction float64,
 ) prometheus.Counter {
 	// TODO(bwplotka): This is actually not ideal for efficiency reasons (type conversions to string).
   // Fix might require internals to completely differ in the client_golang for the efficient solution.
 	return x.CounterVec.WithLabelValues(
-		fmt.Sprintf("%v", integer),
-		fmt.Sprintf("%v", category),
+		fmt.Sprintf("%v", number),
+		fmt.Sprintf("%v", class),
 		fmt.Sprintf("%v", fraction),
 	)
 }
