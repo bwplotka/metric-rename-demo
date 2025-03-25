@@ -42,7 +42,7 @@ func TestMyApp_PrometheusWriting(t *testing.T) {
 	testutil.Ok(t, e2e.StartAndWaitReady(myApp, myApp2))
 
 	// Create a go routine that switches runnables under a single name for different versions.
-	switchInterval := 10 * time.Second
+	switchInterval := 5 * time.Minute
 	activeSchemaVersion := 0
 	myAppSwitchingFuture := newMyAppFuture(e, "my-app")
 	myAppSwitching := newMyAppFromFuture(myAppSwitchingFuture, myAppImage, map[string]string{"-metric-source": schemaVersions[activeSchemaVersion]})
@@ -128,6 +128,7 @@ scrape_configs:
 - job_name: 'my-app'
   scrape_interval: 5s
   scrape_timeout: 5s
+	convert_classic_histograms_to_nhcb: true
   static_configs:
   - targets: [%v]
 `, name, f.InternalEndpoint("http"), strings.Join(scrapeAddrs, ","))

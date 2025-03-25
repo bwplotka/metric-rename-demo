@@ -70,7 +70,7 @@ gen: $(WEAVER)
 		--simple --debug \
 		--registry=./my-org/semconv/$(SEMCONV_VERSION1) \
 		--templates=./prometheus/weaver_templates/client_golang \
-		--param="schema_url=https://raw.githubusercontent.com/bwplotka/metric-rename-demo/refs/heads/diff/my-org/semconv/v1.0.0" \
+		--param="schema_url=https://bwplotka.dev/semconv/v1.0.0" \
 		--future \
 		go \
 		./my-org/my-app/semconv.gen/$(SEMCONV_VERSION1)
@@ -79,7 +79,7 @@ gen: $(WEAVER)
 		--simple --debug \
 		--registry=./my-org/semconv/$(SEMCONV_VERSION2) \
 		--templates=./prometheus/weaver_templates/client_golang \
-		--param="schema_url=https://raw.githubusercontent.com/bwplotka/metric-rename-demo/refs/heads/diff/my-org/semconv/v1.1.0" \
+		--param="schema_url=https://bwplotka.dev/semconv/v1.1.0" \
 		--future \
 		go \
 		./my-org/my-app/semconv.gen/$(SEMCONV_VERSION2)
