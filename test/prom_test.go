@@ -43,7 +43,9 @@ func TestMyApp_PrometheusWriting(t *testing.T) {
 	// Create a go routine that switches runnables under a single name for different versions.
 	switchInterval := 10 * time.Second
 	activeSchemaVersion := 0
-	myAppSwitching := newMyApp(e, "my-app", myAppImage, map[string]string{"-metric-source": schemaVersions[activeSchemaVersion]})
+	myAppSwitchingFuture := newMyAppFuture(e, "my-app")
+	myAppSwitching := newMyAppFromFuture(myAppSwitchingFuture, myAppImage, map[string]string{"-metric-source": schemaVersions[activeSchemaVersion]})
+
 	testutil.Ok(t, e2e.StartAndWaitReady(myAppSwitching))
 	{
 		var wg sync.WaitGroup
@@ -66,9 +68,7 @@ func TestMyApp_PrometheusWriting(t *testing.T) {
 					testutil.Ok(t, myAppSwitching.Stop())
 
 					activeSchemaVersion = (activeSchemaVersion + 1) % 2
-
-					// Must be same name for InternalEndpoint to stay consistent!
-					myAppSwitching = newMyApp(e, "my-app", myAppImage, map[string]string{"-metric-source": schemaVersions[activeSchemaVersion]})
+					myAppSwitching = newMyAppFromFuture(myAppSwitchingFuture, myAppImage, map[string]string{"-metric-source": schemaVersions[activeSchemaVersion]})
 					testutil.Ok(t, e2e.StartAndWaitReady(myAppSwitching))
 				}
 			}
@@ -82,16 +82,21 @@ func TestMyApp_PrometheusWriting(t *testing.T) {
 	}, nil)
 	testutil.Ok(t, e2e.StartAndWaitReady(prom))
 
-	testutil.Ok(t, e2einteractive.OpenInBrowser("http://"+prom.Endpoint("http")+`/query?g0.expr=histogram_quantile%28%0A++0.9%2C%0A++sum+by+%28le%2C+job%2C+code%29+%28%0A++++rate%28%0A++++++my_app_latency_seconds_total_bucket%7B__schema__url__%3D"https%3A%2F%2Fraw.githubusercontent.com%2Fbwplotka%2Fmetric-rename-demo%2Frefs%2Fheads%2Fdiff%2Fmy-org%2Fsemconv%2Fv1.1.0"%7D%5B1m%5D%0A++++%29%0A++%29%0A%29&g0.show_tree=0&g0.tab=graph&g0.range_input=15m&g0.res_type=auto&g0.res_density=medium&g0.display_mode=lines&g0.show_exemplars=0&g1.expr=my_app_latency_seconds_total_bucket&g1.show_tree=0&g1.tab=table&g1.range_input=1h&g1.res_type=auto&g1.res_density=medium&g1.display_mode=lines&g1.show_exemplars=0`))
+	testutil.Ok(t, e2einteractive.OpenInBrowser("http://"+prom.Endpoint("http")+`/query?g0.expr=histogram_quantile%28%0A++0.9%2C%0A++sum+by+%28le%2C+job%2C+code%29+%28%0A++++rate%28%0A++++++my_app_latency_seconds_total_bucket%7B__schema__url__%3D"https%3A%2F%2Fraw.githubusercontent.com%2Fbwplotka%2Fmetric-rename-demo%2Frefs%2Fheads%2Fdiff%2Fmy-org%2Fsemconv%2Fv1.1.0"%7D%5B1m%5D%0A++++%29%0A++%29%0A%29&g0.show_tree=0&g0.tab=graph&g0.range_input=1h&g0.res_type=auto&g0.res_density=medium&g0.display_mode=lines&g0.show_exemplars=0&g1.expr=my_app_latency_seconds_total_bucket&g1.show_tree=0&g1.tab=table&g1.range_input=1h&g1.res_type=auto&g1.res_density=medium&g1.display_mode=lines&g1.show_exemplars=0`))
 	testutil.Ok(t, e2einteractive.RunUntilEndpointHit())
 }
 
 func newMyApp(e e2e.Environment, name, image string, flagOverride map[string]string) *e2emon.InstrumentedRunnable {
-	ports := map[string]int{"http": 9011}
+	return newMyAppFromFuture(newMyAppFuture(e, name), image, flagOverride)
+}
 
-	f := e.Runnable(name).WithPorts(ports).Future()
+func newMyAppFuture(e e2e.Environment, name string) e2e.FutureRunnable {
+	return e.Runnable(name).WithPorts(map[string]int{"http": 9011}).Future()
+}
+
+func newMyAppFromFuture(f e2e.FutureRunnable, image string, flagOverride map[string]string) *e2emon.InstrumentedRunnable {
 	args := map[string]string{
-		"-listen-address": fmt.Sprintf(":%d", ports["http"]),
+		"-listen-address": f.InternalEndpoint("http"),
 	}
 	if flagOverride != nil {
 		args = e2e.MergeFlagsWithoutRemovingEmpty(args, flagOverride)
