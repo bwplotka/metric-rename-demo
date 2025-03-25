@@ -5,7 +5,7 @@ go 1.22.6
 require (
 	github.com/nelkinda/health-go v0.0.1
 	github.com/oklog/run v1.1.0
-	github.com/prometheus/client_golang v1.21.0-rc.0
+	github.com/prometheus/client_golang 331dfab0cc853dca0242a0d96a80184087a80c1d
 )
 
 require (

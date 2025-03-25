@@ -1,0 +1,53 @@
+{
+  "baseline": {
+    "semconv_version": "1.0.0"
+  },
+  "changes": {
+    "events": [],
+    "metrics": [
+      {
+        "backward_promql": "$new * 1000",
+        "fields": {
+          "metric_name": {
+            "new_name": "my_app_latency_seconds_total",
+            "old_name": "my_app_latency_milliseconds_total"
+          },
+          "unit": {
+            "new_name": "{seconds}",
+            "old_name": "{milliseconds}"
+          }
+        },
+        "forward_promql": "$old / 1000",
+        "id": "my_app_latency",
+        "note": "Ups, we did not use base unit, our bad. This metric should be auto-transformable, see diff for all changes.",
+        "replaced_by_id": "my_app_latency.2",
+        "type": "updated"
+      },
+      {
+        "name": "my_app_latency.2",
+        "type": "added"
+      },
+      {
+        "name": "my_app_some_elements",
+        "note": "Not useful anymore",
+        "type": "obsoleted"
+      },
+      {
+        "id": "my_app_custom_elements",
+        "note": "We didn\u0027t like the old name sorry. This metric should be auto-transformable, see diff for all changes.",
+        "replaced_by_id": "my_app_custom_elements",
+        "type": "updated"
+      },
+      {
+        "name": "my_app_custom_elements.2",
+        "type": "added"
+      }
+    ],
+    "registry_attributes": [],
+    "resources": [],
+    "spans": []
+  },
+  "head": {
+    "semconv_version": "1.1.0"
+  }
+}

@@ -1,13 +1,6 @@
-{%- if ctx.id.split('.')[-1].isalnum() -%}
-	{%- set revision = "V" ~ ctx.id.split('.')[-1] %}
-	{%- set package_name = ctx.id.split('.')[:-1] | join('.') | lower | snake_case  -%}
-	{%- set my_file_name = package_name ~ "/" ~ ctx.id | lower | snake_case ~ ".go" -%}
-{%- else -%}
-	{%- set revision = "" %}
-	{%- set package_name = ctx.id | lower | snake_case  -%}
-	{%- set my_file_name = package_name ~ "/" ~ ctx.id | lower | snake_case ~ ".go" -%}
-{%- endif -%}
+{%- set my_file_name = ctx.metric_name | lower | snake_case ~ "/" ~ ctx.instrument ~ ".go" -%}
 {{- template.set_file_name(my_file_name) -}}
+{%- set package_name = ctx.metric_name -%}
 {%- set instrToVecTypes = {
 	'histogram': "HistogramVec",
  	'counter': "CounterVec",
@@ -33,6 +26,10 @@
  	'int': "int",
 	'double': "float64",
 }-%}
+
+{#{% macro const_label_type(label) -%}#}
+{#{{ construct_name | pascal_case ~ label.tag | pascal_case }}#}
+{#{%- endmacro %}#}
 // Copyright 2025 The Prometheus Authors
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -62,12 +59,11 @@ import (
 {%- for label in ctx.attributes -%}
 	{%- if label.type.members is defined %}
 
-// TODO(bwplotka): Detect changes and not add V2 prefix if no change was made?
-type {{ label.tag | pascal_case ~ revision }} string
+type {{ label.tag | pascal_case }} string
 
 const (
 	{%- for value in label.type.members %}
-		{{ value.id | pascal_case ~  label.tag | pascal_case ~ revision }} {{ label.tag | pascal_case ~ revision }} = "{{ value.value }}"
+		{{ value.id | pascal_case ~  label.tag | pascal_case }} {{ label.tag | pascal_case }} = "{{ value.value }}"
 	{%- endfor %}
 )
 	{%- endif %}
@@ -75,15 +71,14 @@ const (
 
 // MustNew returns {{ ctx.id }}.
 {%- if ctx.deprecated is defined  %}
-// Deprecated: {{ ctx.deprecated }}
+// Deprecated; {{ ctx.deprecated }}
 {%- endif %}
 
 {%- if ctx.attributes is defined and ctx.attributes | length > 0 %}
-	{%- set typeName = ctx.metric_name ~ instrToVecTypes[ctx.instrument] ~ revision %}
-func MustNew{{ ctx.metric_name | pascal_case ~ revision }}(reg prometheus.Registerer) *{{ typeName }} {
+func MustNew{{ instrToVecTypes[ctx.instrument] }}(reg prometheus.Registerer) *{{ instrToVecTypes[ctx.instrument] }} {
 	reg = prometheus.WrapRegistererWith(prometheus.Labels{"__schema_url__": "{{ params.schema_url }}"}, reg)
 
-	return &{{ typeName }}{promauto.With(reg).New{{ instrToVecTypes[ctx.instrument] }}(prometheus.{{ instrToOptTypes[ctx.instrument] }}{
+	return &{{ instrToVecTypes[ctx.instrument] }}{promauto.With(reg).New{{ instrToVecTypes[ctx.instrument] }}(prometheus.{{ instrToOptTypes[ctx.instrument] }}{
 		Name: "{{ ctx.metric_name }}",
 		{% if ctx.note is defined -%}
 		Help: "{{ ctx.note }}",
@@ -99,11 +94,11 @@ func MustNew{{ ctx.metric_name | pascal_case ~ revision }}(reg prometheus.Regist
 	})}
 }
 
-type {{ typeName }} struct {
+type {{ instrToVecTypes[ctx.instrument] }} struct {
 	*prometheus.{{ instrToVecTypes[ctx.instrument] }}
 }
 
-func (x *{{ typeName }}) WithLabelValues(
+func (x *{{ instrToVecTypes[ctx.instrument] }}) WithLabelValues(
 {%- for label in ctx.attributes %}
 	{%- if label.type.members is defined %}
 	{{label.tag}} {{ label.tag | pascal_case }},
@@ -121,7 +116,7 @@ func (x *{{ typeName }}) WithLabelValues(
 	)
 }
 {%- else %}
-func MustNew{{ ctx.metric_name ~ revision }}(reg prometheus.Registerer) prometheus.{{ instrToTypes[ctx.instrument] }} {
+func MustNew{{ instrToTypes[ctx.instrument] }}(reg prometheus.Registerer) prometheus.{{ instrToTypes[ctx.instrument] }} {
 	reg = prometheus.WrapRegistererWith(prometheus.Labels{"__schema_url__": "{{ params.schema_url }}"}, reg)
 
 	return promauto.With(reg).New{{ instrToTypes[ctx.instrument] }}(prometheus.{{ instrToOptTypes[ctx.instrument] }}{

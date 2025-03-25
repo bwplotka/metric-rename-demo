@@ -13,7 +13,7 @@ import (
 	elements_v100 "github.com/bwplotka/metric-rename-demo/my-org/my-app/semconv.gen/v1.0.0/my_app_custom_elements_total"
 	elements_changed_v110 "github.com/bwplotka/metric-rename-demo/my-org/my-app/semconv.gen/v1.1.0/my_app_custom_elements_changed_total"
 	latency_millis_v100 "github.com/bwplotka/metric-rename-demo/my-org/my-app/semconv.gen/v1.0.0/my_app_latency_milliseconds_total"
-	latency_v110 "github.com/bwplotka/metric-rename-demo/my-org/my-app/semconv.gen/v1.1.0/my_app_latency_seconds_total"
+	my_app_latency "github.com/bwplotka/metric-rename-demo/my-org/my-app/semconv.gen/v1.1.0/my_app_latency"
 
 	"github.com/nelkinda/health-go"
 	"github.com/oklog/run"
@@ -50,12 +50,12 @@ func main() {
 	case "generated@v1.0.0":
 		elementsCount = elements_v100.MustNewCounterVec(reg).
 			WithLabelValues(100, elements_v100.FirstCategory, 1.2414)
-		latency = latency_millis_v100.MustNewHistogramVec(reg).
+		latency = my_app_latency.MustNewMyAppLatencyMillisecondsTotal(reg).
 			WithLabelValues(200)
 	case "generated@v1.1.0":
 		elementsCount = elements_changed_v110.MustNewCounterVec(reg).
 			WithLabelValues(100, elements_changed_v110.FirstClass, 1.2414)
-		latency = latency_v110.MustNewHistogramVec(reg).
+		latency = my_app_latency.MustNewMyAppLatencySecondsTotalV2(reg).
 			WithLabelValues(200)
 	default:
 		log.Fatalf("unknown -metric-source source, got %v", *metricDefinition)

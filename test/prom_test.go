@@ -21,7 +21,7 @@ const (
 	myAppImage = "quay.io/bwplotka/my-app:latest"
 
 	// Prometheus built from "rename-kubecon" branch.
-	promImage = "quay.io/bwplotka/prometheus:semconv-v1"
+	promImage = "quay.io/bwplotka/prometheus:semconv-v1.1"
 )
 
 // Requires make docker DOCKER_TAG=latest before starting.
@@ -82,7 +82,7 @@ func TestMyApp_PrometheusWriting(t *testing.T) {
 	}, nil)
 	testutil.Ok(t, e2e.StartAndWaitReady(prom))
 
-	testutil.Ok(t, e2einteractive.OpenInBrowser("http://"+prom.Endpoint("http")))
+	testutil.Ok(t, e2einteractive.OpenInBrowser("http://"+prom.Endpoint("http")+"/query?g0.expr=histogram_quantile%28%0A++0.9%2C%0A++sum+by+%28le%2C+job%2C+code%29+%28%0A++++rate%28%0A++++++my_app_latency_seconds_total_bucket%7B__schema__url__%3D\"https%3A%2F%2Fraw.githubusercontent.com%2Fbwplotka%2Fmetric-rename-demo%2Frefs%2Fheads%2Fdiff%2Fmy-org%2Fsemconv%2Fv1.1.0\"%7D%5B1m%5D%0A++++%29%0A++%29%0A%29&g0.show_tree=0&g0.tab=graph&g0.range_input=15m&g0.res_type=auto&g0.res_density=medium&g0.display_mode=lines&g0.show_exemplars=0&g1.expr=my_app_latency_seconds_total_bucket&g1.show_tree=0&g1.tab=table&g1.range_input=1h&g1.res_type=auto&g1.res_density=medium&g1.display_mode=lines&g1.show_exemplars=0"))
 	testutil.Ok(t, e2einteractive.RunUntilEndpointHit())
 }
 
@@ -124,26 +124,26 @@ scrape_configs:
   scrape_timeout: 5s
   static_configs:
   - targets: [%v]
-`, name, ports["http"], strings.Join(scrapeAddrs, ","))
+`, name, f.InternalEndpoint("http"), strings.Join(scrapeAddrs, ","))
 	if err := os.WriteFile(filepath.Join(f.Dir(), "prometheus.yml"), []byte(config), 0o600); err != nil {
 		return &e2emon.Prometheus{Runnable: e2e.NewFailedRunnable(name, fmt.Errorf("create prometheus config failed: %w", err))}
 	}
 
 	args := map[string]string{
-		"--web.listen-address":                  fmt.Sprintf(":%d", ports["http"]),
-		"--config.file":                         filepath.Join(f.Dir(), "prometheus.yml"),
-		"--storage.tsdb.path":                   f.Dir(),
-		"--enable-feature=exemplar-storage":     "",
-		"--enable-feature=native-histograms":    "",
-		"--enable-feature=metadata-wal-records": "",
-		"--storage.tsdb.no-lockfile":            "",
-		"--storage.tsdb.retention.time":         "1d",
-		"--storage.tsdb.wal-compression":        "",
-		"--storage.tsdb.min-block-duration":     "2h",
-		"--storage.tsdb.max-block-duration":     "2h",
-		"--web.enable-lifecycle":                "",
-		"--log.format":                          "json",
-		"--log.level":                           "info",
+		"--web.listen-address":                    fmt.Sprintf(":%d", ports["http"]),
+		"--config.file":                           filepath.Join(f.Dir(), "prometheus.yml"),
+		"--storage.tsdb.path":                     f.Dir(),
+		"--enable-feature=native-histograms":      "",
+		"--enable-feature=type-and-unit-labels":   "",
+		"--enable-feature=semconv-versioned-read": "",
+		"--storage.tsdb.no-lockfile":              "",
+		"--storage.tsdb.retention.time":           "1d",
+		"--storage.tsdb.wal-compression":          "",
+		"--storage.tsdb.min-block-duration":       "2h",
+		"--storage.tsdb.max-block-duration":       "2h",
+		"--web.enable-lifecycle":                  "",
+		"--log.format":                            "json",
+		"--log.level":                             "info",
 	}
 	if flagOverride != nil {
 		args = e2e.MergeFlagsWithoutRemovingEmpty(args, flagOverride)

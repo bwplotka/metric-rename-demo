@@ -90,10 +90,10 @@ gen: $(WEAVER)
 		--registry=./my-org/semconv/$(SEMCONV_VERSION2) \
 		--diff-format=json \
 		--output=./my-org/semconv/$(SEMCONV_VERSION2)/.gen
-	@echo ">> weaver generate $(SEMCONV_VERSION1) -> $(SEMCONV_VERSION2) relabelling rules for Prometheus"
-	@$(WEAVER) registry diff \
-		--simple --debug \
-		--baseline-registry=./my-org/semconv/$(SEMCONV_VERSION1) \
-		--registry=./my-org/semconv/$(SEMCONV_VERSION2) \
-	    --diff-template=./prometheus/weaver_templates/prometheus --diff-format=yaml \
-	    --output=./my-org/semconv/$(SEMCONV_VERSION2)/.gen
+#	@echo ">> weaver generate $(SEMCONV_VERSION1) -> $(SEMCONV_VERSION2) relabelling rules for Prometheus"
+#	@$(WEAVER) registry diff \
+#		--simple --debug \
+#		--baseline-registry=./my-org/semconv/$(SEMCONV_VERSION1) \
+#		--registry=./my-org/semconv/$(SEMCONV_VERSION2) \
+#	    --diff-template=./prometheus/weaver_templates/prometheus --diff-format=yaml \
+#	    --output=./my-org/semconv/$(SEMCONV_VERSION2)/.gen

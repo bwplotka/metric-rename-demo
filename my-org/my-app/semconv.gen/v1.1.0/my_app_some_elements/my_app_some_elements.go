@@ -1,6 +1,3 @@
-
-
-
 // Copyright 2025 The Prometheus Authors
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,20 +13,20 @@
 
 // Code generated from semantic convention specification. DO NOT EDIT.
 
-package my_app_some_elements_total
+package my_app_some_elements
 
 import (
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promauto"
 )
 
-// MustNew returns my_app_some_elements_total~gauge.
-// Deprecated; {"obsoleted": {"note": "Not useful anymore"}}
-func MustNewGauge(reg prometheus.Registerer) prometheus.Gauge {
+// MustNew returns my_app_some_elements.
+// Deprecated: {"obsoleted": {"note": "Not useful anymore"}}
+func MustNewmy_app_some_elements_totals(reg prometheus.Registerer) prometheus.Gauge {
 	reg = prometheus.WrapRegistererWith(prometheus.Labels{"__schema_url__": "https://github.com/bwplotka/metric-rename-demo/tree/main/my-org/semconv/v1.1.0"}, reg)
 
 	return promauto.With(reg).NewGauge(prometheus.GaugeOpts{
-		Name: "my_app_some_elements_total",
+		Name: "my_app_some_elements_totals",
 		Help: "some metric",
 		// Unit: "{unknown}" // TODO(bwplotka): Add Unit as one of the supported options.
 	})
