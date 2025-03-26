@@ -34,10 +34,9 @@ func MustNewMyAppCustomElementsTotal(reg prometheus.Registerer) *MyAppCustomElem
 	return &MyAppCustomElementsTotal{promauto.With(reg).NewCounterVec(prometheus.CounterOpts{
 		Name: "my_app_custom_elements_total",
 		Help: "Custom counter metric (1.0.0) for my app counting important elements. It serves as an example of a very important metric that everyone is using.",
-		// Unit: "{element}" // TODO(bwplotka): Add Unit as one of the supported options.
+		Unit: "elements", // Yolo parsing of UCUM.
 		ConstLabels: map[string]string{
 			"__schema_url__": "https://bwplotka.dev/semconv/1.0.0",
-			"__unit__": "element", // Tmp hack until client_golang has unit.
 		},
 		
 	}, []string{

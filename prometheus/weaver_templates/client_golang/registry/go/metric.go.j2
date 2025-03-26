@@ -95,12 +95,11 @@ func MustNew{{ type_name }}(reg prometheus.Registerer{{ bucketParam }}) *{{ type
 		{% else -%}
 		Help: "{{ ctx.brief }}",
 		{%- endif %}
-		// Unit: "{{ ctx.unit }}" // TODO(bwplotka): Add Unit as one of the supported options.
+		{%- if ctx.unit is defined and ctx.unit != "{unknown}" %}
+		Unit: "{{ ctx.unit | replace("{", "") | replace("}", "") }}s", // Yolo parsing of UCUM.
+		{%- endif %}
 		ConstLabels: map[string]string{
 			"__schema_url__": "{{ params.schema_url }}",
-		{%- if ctx.unit is defined and ctx.unit != "{unknown}" %}
-			"__unit__": "{{ ctx.unit | replace("{", "") | replace("}", "")  }}", // Tmp hack until client_golang has unit.
-		{%- endif %}
 		},
 		{% if bucketDefine is defined -%}
 		{{ bucketDefine }}
@@ -143,12 +142,11 @@ func MustNew{{ type_name }}(reg prometheus.Registerer{{ bucketParam }}) promethe
 		{% else -%}
 		Help: "{{ ctx.brief }}",
 		{%- endif %}
-		// Unit: "{{ ctx.unit }}" // TODO(bwplotka): Add Unit as one of the supported options.
+		{%- if ctx.unit is defined and ctx.unit != "{unknown}" %}
+		Unit: "{{ ctx.unit | replace("{", "") | replace("}", "") }}s", // Yolo parsing of UCUM.
+		{%- endif %}
 		ConstLabels: map[string]string{
 			"__schema_url__": "{{ params.schema_url }}",
-		{%- if ctx.unit is defined and ctx.unit != "{unknown}" %}
-			"__unit__": "{{ ctx.unit | replace("{", "") | replace("}", "")  }}", // Tmp hack until client_golang has unit.
-		{%- endif %}
 		},
 		{% if bucketDefine is defined -%}
 		{{ bucketDefine }}

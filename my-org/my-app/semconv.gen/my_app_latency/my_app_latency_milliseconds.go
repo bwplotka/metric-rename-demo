@@ -28,10 +28,9 @@ func MustNewMyAppLatencyMilliseconds(reg prometheus.Registerer, buckets []float6
 	return &MyAppLatencyMilliseconds{promauto.With(reg).NewHistogramVec(prometheus.HistogramOpts{
 		Name: "my_app_latency_milliseconds",
 		Help: "Histogram with my-app latency milliseconds (1.0.0)",
-		// Unit: "{millisecond}" // TODO(bwplotka): Add Unit as one of the supported options.
+		Unit: "milliseconds", // Yolo parsing of UCUM.
 		ConstLabels: map[string]string{
 			"__schema_url__": "https://bwplotka.dev/semconv/1.1.0",
-			"__unit__": "millisecond", // Tmp hack until client_golang has unit.
 		},
 		Buckets: buckets,
 	}, []string{
