@@ -2,7 +2,7 @@
 groups:
 - id: "my_app_latency.2"
   type: metric
-  metric_name: my_app_latency_seconds_total # Last change in v1.1.0.
+  metric_name: my_app_latency_seconds # Last change in v1.1.0.
   unit: "{seconds}" # Last change in v1.1.0.
   instrument: "histogram"
   brief: "Histogram with my-app latency seconds (v1.1.0)" # Last change in v1.1.0.
@@ -37,7 +37,7 @@ groups:
 ### Deprecated elements.
 - id: "my_app_latency"
   type: metric
-  metric_name: my_app_latency_milliseconds_total
+  metric_name: my_app_latency_milliseconds
   unit: "{milliseconds}"
   instrument: "histogram"
   brief: "Histogram with my-app latency milliseconds (v1.0.0)"
@@ -45,8 +45,8 @@ groups:
     reason: updated
     note: "Ups, we did not use base unit, our bad. This metric should be auto-transformable, see diff for all changes."
     replaced_by_id: "my_app_latency.2"
-    forward_promql: "$old / 1000"
-    backward_promql: "$new * 1000"
+    forward_promql: "value{} / 1000"
+    backward_promql: "value{} * 1000"
   attributes:
   - id: code
     type: int
@@ -76,7 +76,7 @@ groups:
     brief: "This is an important label that specifies the fraction for this count."
 - id: "my_app_some_elements"
   type: metric
-  metric_name: my_app_some_elements_totals
+  metric_name: my_app_some_elements
   instrument: "gauge"
   brief: "some metric"
   deprecated:

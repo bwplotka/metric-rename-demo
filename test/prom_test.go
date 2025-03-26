@@ -3,6 +3,7 @@ package test
 import (
 	"context"
 	"fmt"
+	"net/url"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -82,9 +83,11 @@ func TestMyApp_PrometheusWriting(t *testing.T) {
 	}, nil)
 	testutil.Ok(t, e2e.StartAndWaitReady(prom))
 
-	testutil.Ok(t, e2einteractive.OpenInBrowser("http://"+prom.Endpoint("http")+`/query?g0.expr=histogram_quantile%28%0A++0.9%2C%0A++sum+by+%28le%2C+job%2C+code%29+%28%0A++++rate%28%0A++++++my_app_latency_seconds_total_bucket%7B__schema_url__%3D"https%3A%2F%2Fraw.githubusercontent.com%2Fbwplotka%2Fmetric-rename-demo%2Frefs%2Fheads%2Fdiff%2Fmy-org%2Fsemconv%2Fv1.1.0"%7D%5B1m%5D%0A++++%29%0A++%29%0A%29&g0.show_tree=0&g0.tab=table&g0.range_input=1h&g0.res_type=auto&g0.res_density=medium&g0.display_mode=lines&g0.show_exemplars=0&g1.expr=my_app_custom_elements_total%7B__schema_url__%3D"https%3A%2F%2Fraw.githubusercontent.com%2Fbwplotka%2Fmetric-rename-demo%2Frefs%2Fheads%2Fdiff%2Fmy-org%2Fsemconv%2Fv1.0.0"%7D&g1.show_tree=0&g1.tab=table&g1.range_input=1h&g1.res_type=auto&g1.res_density=medium&g1.display_mode=lines&g1.show_exemplars=0`))
+	testutil.Ok(t, e2einteractive.OpenInBrowser("http://"+prom.Endpoint("http")+promURL))
 	testutil.Ok(t, e2einteractive.RunUntilEndpointHit())
 }
+
+var promURL = func() string { ret, _ := url.QueryUnescape(`/query?g0.expr=histogram_quantile%28%0A++0.9%2C%0A++sum+by+%28le%2C+job%2C+code%29+%28%0A++++rate%28%0A++++++my_app_latency_seconds_total_bucket%7B__schema_url__%3D"https%3A%2F%2Fraw.githubusercontent.com%2Fbwplotka%2Fmetric-rename-demo%2Frefs%2Fheads%2Fdiff%2Fmy-org%2Fsemconv%2Fv1.1.0"%7D%5B1m%5D%0A++++%29%0A++%29%0A%29&g0.show_tree=0&g0.tab=table&g0.range_input=1h&g0.res_type=auto&g0.res_density=medium&g0.display_mode=lines&g0.show_exemplars=0&g1.expr=my_app_custom_elements_total%7B__schema_url__%3D"https%3A%2F%2Fraw.githubusercontent.com%2Fbwplotka%2Fmetric-rename-demo%2Frefs%2Fheads%2Fdiff%2Fmy-org%2Fsemconv%2Fv1.0.0"%7D&g1.show_tree=0&g1.tab=table&g1.range_input=1h&g1.res_type=auto&g1.res_density=medium&g1.display_mode=lines&g1.show_exemplars=0`); return ret }()
 
 func newMyApp(e e2e.Environment, name, image string, flagOverride map[string]string) *e2emon.InstrumentedRunnable {
 	return newMyAppFromFuture(newMyAppFuture(e, name), image, flagOverride)
