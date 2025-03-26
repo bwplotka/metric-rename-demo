@@ -61,8 +61,8 @@ format: $(GOFUMPT) $(GOIMPORTS) $(MDOX)
 	@echo ">> format documentation"
 	@$(MDOX) fmt --soft-wraps ./*.md
 
-SEMCONV_VERSION1 ?= v1.0.0
-SEMCONV_VERSION2 ?= v1.1.0
+SEMCONV_VERSION1 ?= 1.0.0
+SEMCONV_VERSION2 ?= 1.1.0
 .PHONY: gen # Generate artefacts e.g. metric definitions from my-org semconv.
 gen: $(WEAVER)
 	@echo ">> weaver generate $(SEMCONV_VERSION1) artefacts"
@@ -71,7 +71,7 @@ gen: $(WEAVER)
 		--simple --debug \
 		--registry=./my-org/semconv/$(SEMCONV_VERSION1) \
 		--templates=./prometheus/weaver_templates/client_golang \
-		--param="schema_url=https://bwplotka.dev/semconv/v1.0.0" \
+		--param="schema_url=https://bwplotka.dev/semconv/1.0.0" \
 		--future \
 		go \
 		./my-org/my-app/semconv.gen/$(SEMCONV_VERSION1)
@@ -81,7 +81,7 @@ gen: $(WEAVER)
 		--simple --debug \
 		--registry=./my-org/semconv/$(SEMCONV_VERSION2) \
 		--templates=./prometheus/weaver_templates/client_golang \
-		--param="schema_url=https://bwplotka.dev/semconv/v1.1.0" \
+		--param="schema_url=https://bwplotka.dev/semconv/1.1.0" \
 		--future \
 		go \
 		./my-org/my-app/semconv.gen/$(SEMCONV_VERSION2)

@@ -5,7 +5,7 @@ groups:
   metric_name: my_app_latency_milliseconds
   unit: "{milliseconds}"
   instrument: "histogram"
-  brief: "Histogram with my-app latency milliseconds (v1.0.0)"
+  brief: "Histogram with my-app latency milliseconds (1.0.0)"
   attributes:
   - id: code
     type: int
@@ -14,7 +14,7 @@ groups:
   type: metric
   metric_name: my_app_custom_elements_total
   instrument: "counter"
-  brief: "Custom counter metric (v1.0.0) for my app counting important elements. It serves as an example of a very important metric that everyone is using."
+  brief: "Custom counter metric (1.0.0) for my app counting important elements. It serves as an example of a very important metric that everyone is using."
   attributes:
   - id: "integer"
     type: int

@@ -25,10 +25,10 @@ import (
 func MustNewMyAppLatencySeconds(reg prometheus.Registerer, buckets []float64) *MyAppLatencySeconds {
 	return &MyAppLatencySeconds{promauto.With(reg).NewHistogramVec(prometheus.HistogramOpts{
 		Name: "my_app_latency_seconds",
-		Help: "Histogram with my-app latency seconds (v1.1.0)",
+		Help: "Histogram with my-app latency seconds (1.1.0)",
 		// Unit: "{seconds}" // TODO(bwplotka): Add Unit as one of the supported options.
 		ConstLabels: map[string]string{
-			"__schema_url__": "https://bwplotka.dev/semconv/v1.1.0",
+			"__schema_url__": "https://bwplotka.dev/semconv/1.1.0",
 			"__unit__": "seconds", // Tmp hack until client_golang has unit.
 		},
 		Buckets: buckets,

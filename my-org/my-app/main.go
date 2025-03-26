@@ -10,11 +10,11 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/bwplotka/metric-rename-demo/my-org/my-app/semconv.gen/v1.0.0/my_app_custom_elements"
-	"github.com/bwplotka/metric-rename-demo/my-org/my-app/semconv.gen/v1.1.0/my_app_custom_elements/2"
+	"github.com/bwplotka/metric-rename-demo/my-org/my-app/semconv.gen/1.0.0/my_app_custom_elements"
+	"github.com/bwplotka/metric-rename-demo/my-org/my-app/semconv.gen/1.1.0/my_app_custom_elements/2"
 
-	"github.com/bwplotka/metric-rename-demo/my-org/my-app/semconv.gen/v1.1.0/my_app_latency"
-	"github.com/bwplotka/metric-rename-demo/my-org/my-app/semconv.gen/v1.1.0/my_app_latency/2"
+	"github.com/bwplotka/metric-rename-demo/my-org/my-app/semconv.gen/1.0.0/my_app_latency"
+	"github.com/bwplotka/metric-rename-demo/my-org/my-app/semconv.gen/1.1.0/my_app_latency/2"
 
 	"github.com/nelkinda/health-go"
 	"github.com/oklog/run"

@@ -3,5 +3,5 @@
 
 name: my-org
 description: my-org Semantic Conventions Registry
-semconv_version: v1.0.0
-schema_base_url: https://raw.githubusercontent.com/bwplotka/metric-rename-demo/refs/heads/diff/my-org/semconv
+semconv_version: 1.0.0
+schema_base_url: https://bwplotka.dev/semconv/

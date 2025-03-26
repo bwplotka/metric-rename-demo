@@ -21,14 +21,13 @@ import (
 )
 
 // MustNew returns my_app_some_elements.
-// Deprecated {"obsoleted": {"note": "Not useful anymore"}}
 func MustNewMyAppSomeElements(reg prometheus.Registerer) prometheus.Gauge {
 	return promauto.With(reg).NewGauge(prometheus.GaugeOpts{
 		Name: "my_app_some_elements",
 		Help: "some metric",
 		// Unit: "{unknown}" // TODO(bwplotka): Add Unit as one of the supported options.
 		ConstLabels: map[string]string{
-			"__schema_url__": "https://bwplotka.dev/semconv/v1.1.0",
+			"__schema_url__": "https://bwplotka.dev/semconv/1.0.0",
 		},
 		
 	})

@@ -5,7 +5,7 @@ groups:
   metric_name: my_app_latency_seconds # Previously "my_app_latency_milliseconds".
   unit: "{seconds}" # Previously "{milliseconds}".
   instrument: "histogram"
-  brief: "Histogram with my-app latency seconds (v1.1.0)"
+  brief: "Histogram with my-app latency seconds (1.1.0)"
   attributes:
   - id: code
     type: int
@@ -14,7 +14,7 @@ groups:
   type: metric
   metric_name: my_app_custom_elements_changed_total # Previously "my_app_custom_elements_total".
   instrument: "counter"
-  brief: "Custom counter metric (v1.1.0) for my app counting important elements. It serves as an example of a very important metric that everyone is using. Replacement to my_app_custom_elements_total~counter" # Last change in v1.1.0.
+  brief: "Custom counter metric (1.1.0) for my app counting important elements. It serves as an example of a very important metric that everyone is using. Replacement to my_app_custom_elements_total~counter" # Last change in 1.1.0.
   attributes:
   - id: "integer"
     tag: "number" # Previously "integer".
@@ -40,7 +40,7 @@ groups:
   metric_name: my_app_latency_milliseconds
   unit: "{milliseconds}"
   instrument: "histogram"
-  brief: "Histogram with my-app latency milliseconds (v1.0.0)"
+  brief: "Histogram with my-app latency milliseconds (1.0.0)"
   deprecated:
     reason: updated
     note: "Ups, we did not use base unit, our bad. This metric should be auto-transformable, see diff for all changes."
@@ -55,7 +55,7 @@ groups:
   type: metric
   metric_name: my_app_custom_elements_total
   instrument: "counter"
-  brief: "Custom counter metric (v1.0.0) for my app counting important elements. It serves as an example of a very important metric that everyone is using."
+  brief: "Custom counter metric (1.0.0) for my app counting important elements. It serves as an example of a very important metric that everyone is using."
   deprecated:
     reason: updated
     replaced_by_id: "my_app_custom_elements.2"

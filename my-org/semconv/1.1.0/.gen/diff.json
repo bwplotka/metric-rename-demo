@@ -1,14 +1,10 @@
 {
   "baseline": {
-    "semconv_version": "v1.0.0"
+    "semconv_version": "1.0.0"
   },
   "changes": {
     "events": [],
     "metrics": [
-      {
-        "name": "my_app_latency.2",
-        "type": "added"
-      },
       {
         "attributes": {
           "category": {
@@ -34,11 +30,6 @@
         "type": "updated"
       },
       {
-        "name": "my_app_some_elements",
-        "note": "Not useful anymore",
-        "type": "obsoleted"
-      },
-      {
         "backward_promql": "value{} * 1000",
         "fields": {
           "metric_name": {
@@ -57,8 +48,17 @@
         "type": "updated"
       },
       {
+        "name": "my_app_latency.2",
+        "type": "added"
+      },
+      {
         "name": "my_app_custom_elements.2",
         "type": "added"
+      },
+      {
+        "name": "my_app_some_elements",
+        "note": "Not useful anymore...",
+        "type": "obsoleted"
       }
     ],
     "registry_attributes": [],
@@ -66,6 +66,6 @@
     "spans": []
   },
   "head": {
-    "semconv_version": "v1.1.0"
+    "semconv_version": "1.1.0"
   }
 }
