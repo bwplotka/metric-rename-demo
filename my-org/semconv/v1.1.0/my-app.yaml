@@ -81,4 +81,4 @@ groups:
   brief: "some metric"
   deprecated:
     reason: "obsoleted"
-    note: "Not useful anymore"
+    note: "Not useful anymore..."
