@@ -81,9 +81,13 @@ const (
 	{%- endif %}
 {%- endif %}
 
+{%- if ctx.instrument == "histogram" %}
+{%- set bucketParam = ", buckets []float64" %}
+{%- set bucketDefine = "Buckets: buckets," %}
+{%- endif %}
 {%- set type_name = ctx.metric_name | lower | pascal_case %}
 {%- if ctx.attributes is defined and ctx.attributes | length > 0 %}
-func MustNew{{ type_name }}(reg prometheus.Registerer) *{{ type_name }} {
+func MustNew{{ type_name }}(reg prometheus.Registerer{{ bucketParam }}) *{{ type_name }} {
 	return &{{ type_name }}{promauto.With(reg).New{{ instrToVecTypes[ctx.instrument] }}(prometheus.{{ instrToOptTypes[ctx.instrument] }}{
 		Name: "{{ ctx.metric_name }}",
 		{% if ctx.note is defined -%}
@@ -98,6 +102,9 @@ func MustNew{{ type_name }}(reg prometheus.Registerer) *{{ type_name }} {
 			"__unit__": "{{ ctx.unit | replace("{", "") | replace("}", "")  }}", // Tmp hack until client_golang has unit.
 		{%- endif %}
 		},
+		{% if bucketDefine is defined -%}
+		{{ bucketDefine }}
+		{%- endif %}
 	}, []string{
 {%- for label in ctx.attributes %}
 		// {{ label.brief }}
@@ -128,7 +135,7 @@ func (x *{{ type_name }}) WithLabelValues(
 	)
 }
 {%- else %}
-func MustNew{{ type_name }}(reg prometheus.Registerer) prometheus.{{ instrToTypes[ctx.instrument] }} {
+func MustNew{{ type_name }}(reg prometheus.Registerer{{ bucketParam }}) prometheus.{{ instrToTypes[ctx.instrument] }} {
 	return promauto.With(reg).New{{ instrToTypes[ctx.instrument] }}(prometheus.{{ instrToOptTypes[ctx.instrument] }}{
 		Name: "{{ ctx.metric_name }}",
 		{% if ctx.note is defined -%}
@@ -143,6 +150,9 @@ func MustNew{{ type_name }}(reg prometheus.Registerer) prometheus.{{ instrToType
 			"__unit__": "{{ ctx.unit | replace("{", "") | replace("}", "")  }}", // Tmp hack until client_golang has unit.
 		{%- endif %}
 		},
+		{% if bucketDefine is defined -%}
+		{{ bucketDefine }}
+		{%- endif %}
 	})
 }
 {%- endif %}

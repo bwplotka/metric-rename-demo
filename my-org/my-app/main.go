@@ -56,12 +56,12 @@ func main() {
 	case "generated@v1.0.0":
 		elementsCount = my_app_custom_elements.MustNewMyAppCustomElementsTotal(reg).
 			WithLabelValues(100, my_app_custom_elements.FirstCategory, 1.2414)
-		latency = my_app_latency.MustNewMyAppLatencyMillisecondsTotal(reg).
+		latency = my_app_latency.MustNewMyAppLatencyMilliseconds(reg, []float64{1000, 10000, 100000}).
 			WithLabelValues(200)
 	case "generated@v1.1.0":
 		elementsCount = my_app_custom_elements_2.MustNewMyAppCustomElementsChangedTotal(reg).
 			WithLabelValues(100, my_app_custom_elements_2.FirstClass, 1.2414)
-		latency = my_app_latency_2.MustNewMyAppLatencySecondsTotal(reg).
+		latency = my_app_latency_2.MustNewMyAppLatencySeconds(reg, []float64{1, 10, 100}). // Buckets has to scaled too.
 			WithLabelValues(200)
 	default:
 		log.Fatalf("unknown -metric-source source, got %v", *metricDefinition)

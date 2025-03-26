@@ -21,14 +21,15 @@ import (
 )
 
 // MustNew returns my_app_some_elements.
-func MustNewMyAppSomeElementsTotals(reg prometheus.Registerer) prometheus.Gauge {
+func MustNewMyAppSomeElements(reg prometheus.Registerer) prometheus.Gauge {
 	return promauto.With(reg).NewGauge(prometheus.GaugeOpts{
-		Name: "my_app_some_elements_totals",
+		Name: "my_app_some_elements",
 		Help: "some metric",
 		// Unit: "{unknown}" // TODO(bwplotka): Add Unit as one of the supported options.
 		ConstLabels: map[string]string{
 			"__schema_url__": "https://bwplotka.dev/semconv/v1.0.0",
 		},
+		
 	})
 }
 

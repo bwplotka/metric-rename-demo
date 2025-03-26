@@ -38,6 +38,7 @@ func MustNewMyAppCustomElementsChangedTotal(reg prometheus.Registerer) *MyAppCus
 		ConstLabels: map[string]string{
 			"__schema_url__": "https://bwplotka.dev/semconv/v1.1.0",
 		},
+		
 	}, []string{
 		// Important label that specifies the integer for this count.
 		"number",

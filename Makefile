@@ -66,6 +66,7 @@ SEMCONV_VERSION2 ?= v1.1.0
 .PHONY: gen # Generate artefacts e.g. metric definitions from my-org semconv.
 gen: $(WEAVER)
 	@echo ">> weaver generate $(SEMCONV_VERSION1) artefacts"
+	@rm -rf ./my-org/my-app/semconv.gen/$(SEMCONV_VERSION1)
 	@$(WEAVER) registry generate \
 		--simple --debug \
 		--registry=./my-org/semconv/$(SEMCONV_VERSION1) \
@@ -75,6 +76,7 @@ gen: $(WEAVER)
 		go \
 		./my-org/my-app/semconv.gen/$(SEMCONV_VERSION1)
 	@echo ">> weaver generate $(SEMCONV_VERSION2) artefacts"
+	@rm -rf ./my-org/my-app/semconv.gen/$(SEMCONV_VERSION2)
 	@$(WEAVER) registry generate \
 		--simple --debug \
 		--registry=./my-org/semconv/$(SEMCONV_VERSION2) \

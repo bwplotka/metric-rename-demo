@@ -22,26 +22,27 @@ import (
 )
 
 // MustNew returns my_app_latency.2.
-func MustNewMyAppLatencySecondsTotal(reg prometheus.Registerer) *MyAppLatencySecondsTotal {
-	return &MyAppLatencySecondsTotal{promauto.With(reg).NewHistogramVec(prometheus.HistogramOpts{
-		Name: "my_app_latency_seconds_total",
+func MustNewMyAppLatencySeconds(reg prometheus.Registerer, buckets []float64) *MyAppLatencySeconds {
+	return &MyAppLatencySeconds{promauto.With(reg).NewHistogramVec(prometheus.HistogramOpts{
+		Name: "my_app_latency_seconds",
 		Help: "Histogram with my-app latency seconds (v1.1.0)",
 		// Unit: "{seconds}" // TODO(bwplotka): Add Unit as one of the supported options.
 		ConstLabels: map[string]string{
 			"__schema_url__": "https://bwplotka.dev/semconv/v1.1.0",
 			"__unit__": "seconds", // Tmp hack until client_golang has unit.
 		},
+		Buckets: buckets,
 	}, []string{
 		// HTTP status code.
 		"code",
 	})}
 }
 
-type MyAppLatencySecondsTotal struct {
+type MyAppLatencySeconds struct {
 	*prometheus.HistogramVec
 }
 
-func (x *MyAppLatencySecondsTotal) WithLabelValues(
+func (x *MyAppLatencySeconds) WithLabelValues(
 	code int,
 ) prometheus.Observer {
 	// TODO(bwplotka): This is actually not ideal for efficiency reasons (type conversions to string).
