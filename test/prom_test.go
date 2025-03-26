@@ -80,6 +80,18 @@ func TestMyApp_PrometheusWriting(t *testing.T) {
 	testutil.Ok(t, e2einteractive.RunUntilEndpointHit())
 }
 
+/*
+irate(my_app_custom_elements_total{category="first"}[1m])
+
+irate(my_app_custom_elements_total{category="first"}[1m]) or irate(my_app_custom_elements_changed_total{class="FIRST"}[1m])
+
+irate(my_app_custom_elements_total{__schema_url__="https://bwplotka.dev/semconv/v1.0.0", category="first"}[1m])
+
+irate(my_app_custom_elements_total{category="first"}[1m])
+
+https://www.bwplotka.dev/semconv/v1.0.0/my-app.yaml
+*/
+
 var promURL = func() string { ret, _ := url.QueryUnescape(`/query?g0.expr=histogram_quantile%28%0A++0.9%2C%0A++sum+by+%28le%2C+instance%2C+code%29+%28%0A++++rate%28%0A++++++my_app_latency_seconds_bucket%7B__schema_url__%3D"https%3A%2F%2Fbwplotka.dev%2Fsemconv%2Fv1.1.0"%7D%5B1m%5D%0A++++%29%0A++%29%0A%29&g0.show_tree=0&g0.tab=table&g0.range_input=1h&g0.res_type=auto&g0.res_density=medium&g0.display_mode=lines&g0.show_exemplars=0&g1.expr=my_app_custom_elements_total%7B__schema_url__%3D"https%3A%2F%2Fbwplotka.dev%2Fsemconv%2Fv1.0.0"%7D&g1.show_tree=0&g1.tab=table&g1.range_input=1h&g1.res_type=auto&g1.res_density=medium&g1.display_mode=lines&g1.show_exemplars=0`); return ret }()
 
 var promURL2 = func() string { ret, _ := url.QueryUnescape(`/query?g0.expr=rate%28my_app_custom_elements_total%7B__schema_url__%3D"https%3A%2F%2Fbwplotka.dev%2Fsemconv%2Fv1.0.0"%2C+category%3D"first"%7D%5B1m%5D%29&g0.show_tree=0&g0.tab=graph&g0.range_input=5m&g0.res_type=auto&g0.res_density=medium&g0.display_mode=lines&g0.show_exemplars=0&g1.expr=rate%28my_app_custom_elements_total%7Bcategory%3D"first"%7D%5B1m%5D%29+or+rate%28my_app_custom_elements_changed_total%7Bclass%3D"FIRST"%7D%5B1m%5D%29&g1.show_tree=0&g1.tab=graph&g1.range_input=5m&g1.res_type=auto&g1.res_density=medium&g1.display_mode=lines&g1.show_exemplars=0`); return ret }()

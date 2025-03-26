@@ -61,37 +61,34 @@ format: $(GOFUMPT) $(GOIMPORTS) $(MDOX)
 	@echo ">> format documentation"
 	@$(MDOX) fmt --soft-wraps ./*.md
 
-SEMCONV_VERSION1 ?= 1.0.0
-SEMCONV_VERSION2 ?= 1.1.0
 .PHONY: gen # Generate artefacts e.g. metric definitions from my-org semconv.
 gen: $(WEAVER)
-	@echo ">> weaver generate $(SEMCONV_VERSION1) artefacts"
-	@rm -rf ./my-org/my-app/semconv.gen/$(SEMCONV_VERSION1)
+	@rm -rf ./my-org/my-app/semconv.gen
+	@echo ">> weaver generate 1.0.0 artefacts (just to show what was in the past)"
 	@$(WEAVER) registry generate \
 		--simple --debug \
-		--registry=./my-org/semconv/$(SEMCONV_VERSION1) \
+		--registry=./my-org/semconv/1.0.0/registry \
 		--templates=./prometheus/weaver_templates/client_golang \
 		--param="schema_url=https://bwplotka.dev/semconv/1.0.0" \
 		--future \
 		go \
-		./my-org/my-app/semconv.gen/$(SEMCONV_VERSION1)
-	@echo ">> weaver generate $(SEMCONV_VERSION2) artefacts"
-	@rm -rf ./my-org/my-app/semconv.gen/$(SEMCONV_VERSION2)
+		./my-org/my-app/semconv.gen/1.0.0
+	@echo ">> weaver generate 1.1.0 (latest) artefacts"
 	@$(WEAVER) registry generate \
 		--simple --debug \
-		--registry=./my-org/semconv/$(SEMCONV_VERSION2) \
+		--registry=./my-org/semconv/registry \
 		--templates=./prometheus/weaver_templates/client_golang \
 		--param="schema_url=https://bwplotka.dev/semconv/1.1.0" \
 		--future \
 		go \
-		./my-org/my-app/semconv.gen/$(SEMCONV_VERSION2)
-	@echo ">> weaver generate $(SEMCONV_VERSION1) -> $(SEMCONV_VERSION2) diff"
+		./my-org/my-app/semconv.gen/
+	@echo ">> weaver generate 1.0.0 -> 1.1.0 diff"
 	@$(WEAVER) registry diff \
 		--simple --debug \
-		--baseline-registry=./my-org/semconv/$(SEMCONV_VERSION1) \
-		--registry=./my-org/semconv/$(SEMCONV_VERSION2) \
+		--baseline-registry=./my-org/semconv/1.0.0/registry \
+		--registry=./my-org/semconv/registry \
 		--diff-format=json \
-		--output=./my-org/semconv/$(SEMCONV_VERSION2)/.gen
+		--output=./my-org/semconv
 #	@echo ">> weaver generate $(SEMCONV_VERSION1) -> $(SEMCONV_VERSION2) relabelling rules for Prometheus"
 #	@$(WEAVER) registry diff \
 #		--simple --debug \

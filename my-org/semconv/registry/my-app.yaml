@@ -3,7 +3,7 @@ groups:
 - id: "my_app_latency.2"
   type: metric
   metric_name: my_app_latency_seconds # Previously "my_app_latency_milliseconds".
-  unit: "{seconds}" # Previously "{milliseconds}".
+  unit: "{second}" # Previously "{millisecond}". ("s"?)
   instrument: "histogram"
   brief: "Histogram with my-app latency seconds (1.1.0)"
   attributes:
@@ -38,7 +38,7 @@ groups:
 - id: "my_app_latency"
   type: metric
   metric_name: my_app_latency_milliseconds
-  unit: "{milliseconds}"
+  unit: "{millisecond}"
   instrument: "histogram"
   brief: "Histogram with my-app latency milliseconds (1.0.0)"
   deprecated:
@@ -54,6 +54,7 @@ groups:
 - id: "my_app_custom_elements"
   type: metric
   metric_name: my_app_custom_elements_total
+  unit: "{element}"
   instrument: "counter"
   brief: "Custom counter metric (1.0.0) for my app counting important elements. It serves as an example of a very important metric that everyone is using."
   deprecated:
@@ -77,6 +78,7 @@ groups:
 - id: "my_app_some_elements"
   type: metric
   metric_name: my_app_some_elements
+  unit: "{element}"
   instrument: "gauge"
   brief: "some metric"
   deprecated:
