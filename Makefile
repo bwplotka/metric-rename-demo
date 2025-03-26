@@ -67,7 +67,7 @@ gen: $(WEAVER)
 	@echo ">> weaver generate 1.0.0 artefacts (just to show what was in the past)"
 	@$(WEAVER) registry generate \
 		--simple --debug \
-		--registry=./my-org/semconv/1.0.0/registry \
+		--registry=./my-org/semconv/registry.1.0.0/ \
 		--templates=./prometheus/weaver_templates/client_golang \
 		--param="schema_url=https://bwplotka.dev/semconv/1.0.0" \
 		--future \
@@ -85,7 +85,7 @@ gen: $(WEAVER)
 	@echo ">> weaver generate 1.0.0 -> 1.1.0 diff"
 	@$(WEAVER) registry diff \
 		--simple --debug \
-		--baseline-registry=./my-org/semconv/1.0.0/registry \
+		--baseline-registry=./my-org/semconv/registry.1.0.0 \
 		--registry=./my-org/semconv/registry \
 		--diff-format=json \
 		--output=./my-org/semconv
