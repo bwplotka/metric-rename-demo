@@ -60,12 +60,12 @@ func main() {
 		latency = my_app_latency.MustNewMyAppLatencyMilliseconds(reg, []float64{1000, 10000, 100000}).
 			WithLabelValues(200)
 	case "generated@v1.1.0":
-		elementsCount = my_app_custom_elements_2.MustNewMyAppCustomElementsChangedTotal(reg).
+		elementsCount = my_app_custom_elements_2.MustNewMyAppCustomChangedElementsTotal(reg).
 			WithLabelValues(100, my_app_custom_elements_2.FirstClass, 1.2414)
 		latency = my_app_latency_2.MustNewMyAppLatencySeconds(reg, []float64{1, 10, 100}). // Buckets has to scaled too.
 			WithLabelValues(200)
 	case "generated@v1.2.0":
-		elementsCount = my_app_custom_elements_3.MustNewMyAppCustomElementsChangedTotal(reg).
+		elementsCount = my_app_custom_elements_3.MustNewMyAppCustomChangedElementsTotal(reg).
 			WithLabelValues(100, my_app_custom_elements_3.FirstClass, 1.2414)
 		latency = my_app_latency_2.MustNewMyAppLatencySeconds(reg, []float64{1, 10, 100}). // Buckets has to scaled too.
 			WithLabelValues(200)

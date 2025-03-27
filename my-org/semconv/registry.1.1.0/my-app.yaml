@@ -12,9 +12,10 @@ groups:
     brief: "HTTP status code."
 - id: "my_app_custom_elements.2"
   type: metric
-  metric_name: my_app_custom_elements_changed_total # Previously "my_app_custom_elements_total".
+  metric_name: my_app_custom_changed_elements_total # Previously "my_app_custom_elements_total".
+  unit: "{element}"
   instrument: "counter"
-  brief: "Custom counter metric (1.1.0) for my app counting important elements. It serves as an example of a very important metric that everyone is using. Replacement to my_app_custom_elements_total~counter" # Last change in 1.1.0.
+  brief: "Custom counter metric (1.1.0) for my app counting important elements. It serves as an example of a very important metric that everyone is using. Replacement to my_app_custom_elements_total~elements.counter" # Last change in 1.1.0.
   attributes:
   - id: "integer"
     tag: "number" # Previously "integer".

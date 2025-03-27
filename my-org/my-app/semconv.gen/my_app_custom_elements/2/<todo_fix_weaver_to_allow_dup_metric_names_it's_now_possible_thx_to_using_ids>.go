@@ -35,7 +35,8 @@ const (
 func MustNew<todoFixWeaverToAllowDupMetricNamesIt'sNowPossibleThxToUsingIds>(reg prometheus.Registerer) *<todoFixWeaverToAllowDupMetricNamesIt'sNowPossibleThxToUsingIds> {
 	return &<todoFixWeaverToAllowDupMetricNamesIt'sNowPossibleThxToUsingIds>{promauto.With(reg).NewCounterVec(prometheus.CounterOpts{
 		Name: "<TODO fix weaver to allow dup metric names. It's now possible thx to using IDs>",
-		Help: "Custom counter metric (1.1.0) for my app counting important elements. It serves as an example of a very important metric that everyone is using. Replacement to my_app_custom_elements_total~counter",
+		Help: "Custom counter metric (1.1.0) for my app counting important elements. It serves as an example of a very important metric that everyone is using. Replacement to my_app_custom_elements_total~elements.counter",
+		Unit: "elements", // Yolo parsing of UCUM.
 		ConstLabels: map[string]string{
 			"__schema_url__": "https://bwplotka.dev/semconv/1.2.0",
 		},

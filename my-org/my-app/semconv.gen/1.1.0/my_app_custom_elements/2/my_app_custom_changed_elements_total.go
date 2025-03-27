@@ -13,7 +13,7 @@
 
 // Code generated from semantic convention specification. DO NOT EDIT.
 
-package my_app_custom_elements_3
+package my_app_custom_elements_2
 
 import (
 	"fmt"
@@ -29,18 +29,19 @@ const (
 		OtherClass Class = "OTHER"
 )
 
-// MustNew returns my_app_custom_elements.3.
-func MustNewMyAppCustomElementsChangedTotal(reg prometheus.Registerer) *MyAppCustomElementsChangedTotal {
-	return &MyAppCustomElementsChangedTotal{promauto.With(reg).NewCounterVec(prometheus.CounterOpts{
-		Name: "my_app_custom_elements_changed_total",
-		Help: "Custom counter metric (1.2.0) for my app counting important elements. It serves as an example of a very important metric that everyone is using. Replacement to my_app_custom_elements_total~counter",
+// MustNew returns my_app_custom_elements.2.
+func MustNewMyAppCustomChangedElementsTotal(reg prometheus.Registerer) *MyAppCustomChangedElementsTotal {
+	return &MyAppCustomChangedElementsTotal{promauto.With(reg).NewCounterVec(prometheus.CounterOpts{
+		Name: "my_app_custom_changed_elements_total",
+		Help: "Custom counter metric (1.1.0) for my app counting important elements. It serves as an example of a very important metric that everyone is using. Replacement to my_app_custom_elements_total~elements.counter",
+		Unit: "elements", // Yolo parsing of UCUM.
 		ConstLabels: map[string]string{
-			"__schema_url__": "https://bwplotka.dev/semconv/1.2.0",
+			"__schema_url__": "https://bwplotka.dev/semconv/1.1.0",
 		},
 		
 	}, []string{
 		// Important label that specifies the integer for this count.
-		"my_number",
+		"number",
 		// Important label that specifies the category for this count.
 		"class",
 		// This is an important label that specifies the fraction for this count.
@@ -48,19 +49,19 @@ func MustNewMyAppCustomElementsChangedTotal(reg prometheus.Registerer) *MyAppCus
 	})}
 }
 
-type MyAppCustomElementsChangedTotal struct {
+type MyAppCustomChangedElementsTotal struct {
 	*prometheus.CounterVec
 }
 
-func (x *MyAppCustomElementsChangedTotal) WithLabelValues(
-	my_number int,
+func (x *MyAppCustomChangedElementsTotal) WithLabelValues(
+	number int,
 	class Class,
 	fraction float64,
 ) prometheus.Counter {
 	// TODO(bwplotka): This is actually not ideal for efficiency reasons (type conversions to string).
   // Fix might require internals to completely differ in the client_golang for the efficient solution.
 	return x.CounterVec.WithLabelValues(
-		fmt.Sprintf("%v", my_number),
+		fmt.Sprintf("%v", number),
 		fmt.Sprintf("%v", class),
 		fmt.Sprintf("%v", fraction),
 	)
