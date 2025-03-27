@@ -73,12 +73,21 @@ gen: $(WEAVER)
 		--future \
 		go \
 		./my-org/my-app/semconv.gen/1.0.0
-	@echo ">> weaver generate 1.1.0 (latest) artefacts"
+	@echo ">> weaver generate 1.1.0 artefacts (just to show what was in the past)"
+	@$(WEAVER) registry generate \
+		--simple --debug \
+		--registry=./my-org/semconv/registry.1.1.0 \
+		--templates=./prometheus/weaver_templates/client_golang \
+		--param="schema_url=https://bwplotka.dev/semconv/1.1.0" \
+		--future \
+		go \
+		./my-org/my-app/semconv.gen/1.1.0
+	@echo ">> weaver generate 1.2.0 (latest) artefacts"
 	@$(WEAVER) registry generate \
 		--simple --debug \
 		--registry=./my-org/semconv/registry \
 		--templates=./prometheus/weaver_templates/client_golang \
-		--param="schema_url=https://bwplotka.dev/semconv/1.1.0" \
+		--param="schema_url=https://bwplotka.dev/semconv/1.2.0" \
 		--future \
 		go \
 		./my-org/my-app/semconv.gen/

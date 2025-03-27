@@ -10,14 +10,14 @@ groups:
   - id: code
     type: int
     brief: "HTTP status code."
-- id: "my_app_custom_elements.3"
+- id: "my_app_custom_elements.2"
   type: metric
   metric_name: my_app_custom_elements_changed_total # Previously "my_app_custom_elements_total".
   instrument: "counter"
-  brief: "Custom counter metric (1.2.0) for my app counting important elements. It serves as an example of a very important metric that everyone is using. Replacement to my_app_custom_elements_total~counter"
+  brief: "Custom counter metric (1.1.0) for my app counting important elements. It serves as an example of a very important metric that everyone is using. Replacement to my_app_custom_elements_total~counter" # Last change in 1.1.0.
   attributes:
   - id: "integer"
-    tag: "my_number" # Previously "number" and before "integer".
+    tag: "number" # Previously "integer".
     type: int
     brief: "Important label that specifies the integer for this count."
   - id: "category"
@@ -51,34 +51,6 @@ groups:
   - id: code
     type: int
     brief: "HTTP status code."
-- id: "my_app_custom_elements.2"
-  type: metric
-  metric_name: <TODO fix weaver to allow dup metric names. It's now possible thx to using IDs> # Previously "my_app_custom_elements_total".
-  instrument: "counter"
-  brief: "Custom counter metric (1.1.0) for my app counting important elements. It serves as an example of a very important metric that everyone is using. Replacement to my_app_custom_elements_total~counter"
-  deprecated:
-    reason: updated
-    note: "Ups, changing attribute tag again, number to my_number."
-    replaced_by_id: "my_app_latency.2"
-  attributes:
-  - id: "integer"
-    tag: "number" # Previously "integer".
-    type: int
-    brief: "Important label that specifies the integer for this count."
-  - id: "category"
-    tag: "class" # Previously "category".
-    type:
-      members:
-      - id: "first"
-        value: "FIRST" # Previously "first".
-      - id: "second"
-        value: "SECOND" # Previously "second".
-      - id: "other"
-        value: "OTHER" # Previously "other".
-    brief: "Important label that specifies the category for this count."
-  - id: "fraction"
-    type: double
-    brief: "This is an important label that specifies the fraction for this count."
 - id: "my_app_custom_elements"
   type: metric
   metric_name: my_app_custom_elements_total

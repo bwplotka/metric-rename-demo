@@ -6,34 +6,6 @@
     "events": [],
     "metrics": [
       {
-        "attributes": {
-          "category": {
-            "new_name": "class",
-            "old_name": "category",
-            "type": "renamed"
-          },
-          "integer": {
-            "new_name": "number",
-            "old_name": "integer",
-            "type": "renamed"
-          }
-        },
-        "fields": {
-          "metric_name": {
-            "new_name": "my_app_custom_elements_changed_total",
-            "old_name": "my_app_custom_elements_total"
-          },
-          "unit": {
-            "new_name": "{unknown}",
-            "old_name": "{element}"
-          }
-        },
-        "id": "my_app_custom_elements",
-        "note": "We didn\u0027t like the old name sorry. This metric should be auto-transformable, see diff for all changes.",
-        "replaced_by_id": "my_app_custom_elements.2",
-        "type": "updated"
-      },
-      {
         "backward_promql": "value{} * 1000",
         "fields": {
           "metric_name": {
@@ -52,9 +24,41 @@
         "type": "updated"
       },
       {
+        "attributes": {
+          "category": {
+            "new_name": "class",
+            "old_name": "category",
+            "type": "renamed"
+          },
+          "integer": {
+            "new_name": "number",
+            "old_name": "integer",
+            "type": "renamed"
+          }
+        },
+        "fields": {
+          "metric_name": {
+            "new_name": "\u003cTODO fix weaver to allow dup metric names. It\u0027s now possible thx to using IDs\u003e",
+            "old_name": "my_app_custom_elements_total"
+          },
+          "unit": {
+            "new_name": "{unknown}",
+            "old_name": "{element}"
+          }
+        },
+        "id": "my_app_custom_elements",
+        "note": "We didn\u0027t like the old name sorry. This metric should be auto-transformable, see diff for all changes.",
+        "replaced_by_id": "my_app_custom_elements.2",
+        "type": "updated"
+      },
+      {
         "name": "my_app_some_elements",
         "note": "Not useful anymore...",
         "type": "obsoleted"
+      },
+      {
+        "name": "my_app_custom_elements.3",
+        "type": "added"
       },
       {
         "name": "my_app_latency.2",

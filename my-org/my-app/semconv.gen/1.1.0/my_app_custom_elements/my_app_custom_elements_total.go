@@ -38,7 +38,7 @@ func MustNewMyAppCustomElementsTotal(reg prometheus.Registerer) *MyAppCustomElem
 		Help: "Custom counter metric (1.0.0) for my app counting important elements. It serves as an example of a very important metric that everyone is using.",
 		Unit: "elements", // Yolo parsing of UCUM.
 		ConstLabels: map[string]string{
-			"__schema_url__": "https://bwplotka.dev/semconv/1.2.0",
+			"__schema_url__": "https://bwplotka.dev/semconv/1.1.0",
 		},
 		
 	}, []string{

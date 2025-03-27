@@ -13,7 +13,7 @@
 
 // Code generated from semantic convention specification. DO NOT EDIT.
 
-package my_app_custom_elements
+package my_app_custom_elements_2
 
 import (
 	"fmt"
@@ -21,50 +21,49 @@ import (
 	"github.com/prometheus/client_golang/prometheus/promauto"
 )
 
-type Category string
+type Class string
 
 const (
-		FirstCategory Category = "first"
-		SecondCategory Category = "second"
-		OtherCategory Category = "other"
+		FirstClass Class = "FIRST"
+		SecondClass Class = "SECOND"
+		OtherClass Class = "OTHER"
 )
 
-// MustNew returns my_app_custom_elements.
-// Deprecated: Use my_app_custom_elements_2 instead.
-// Note: {"updated": {"backward_promql": none, "forward_promql": none, "note": "We didn't like the old name sorry. This metric should be auto-transformable, see diff for all changes.", "replaced_by_id": "my_app_custom_elements.2"}}
-func MustNewMyAppCustomElementsTotal(reg prometheus.Registerer) *MyAppCustomElementsTotal {
-	return &MyAppCustomElementsTotal{promauto.With(reg).NewCounterVec(prometheus.CounterOpts{
-		Name: "my_app_custom_elements_total",
-		Help: "Custom counter metric (1.0.0) for my app counting important elements. It serves as an example of a very important metric that everyone is using.",
-		Unit: "elements", // Yolo parsing of UCUM.
+// MustNew returns my_app_custom_elements.2.
+// Deprecated: Use my_app_latency_2 instead.
+// Note: {"updated": {"backward_promql": none, "forward_promql": none, "note": "Ups, changing attribute tag again, number to my_number.", "replaced_by_id": "my_app_latency.2"}}
+func MustNew<todoFixWeaverToAllowDupMetricNamesIt'sNowPossibleThxToUsingIds>(reg prometheus.Registerer) *<todoFixWeaverToAllowDupMetricNamesIt'sNowPossibleThxToUsingIds> {
+	return &<todoFixWeaverToAllowDupMetricNamesIt'sNowPossibleThxToUsingIds>{promauto.With(reg).NewCounterVec(prometheus.CounterOpts{
+		Name: "<TODO fix weaver to allow dup metric names. It's now possible thx to using IDs>",
+		Help: "Custom counter metric (1.1.0) for my app counting important elements. It serves as an example of a very important metric that everyone is using. Replacement to my_app_custom_elements_total~counter",
 		ConstLabels: map[string]string{
 			"__schema_url__": "https://bwplotka.dev/semconv/1.2.0",
 		},
 		
 	}, []string{
 		// Important label that specifies the integer for this count.
-		"integer",
+		"number",
 		// Important label that specifies the category for this count.
-		"category",
+		"class",
 		// This is an important label that specifies the fraction for this count.
 		"fraction",
 	})}
 }
 
-type MyAppCustomElementsTotal struct {
+type <todoFixWeaverToAllowDupMetricNamesIt'sNowPossibleThxToUsingIds> struct {
 	*prometheus.CounterVec
 }
 
-func (x *MyAppCustomElementsTotal) WithLabelValues(
-	integer int,
-	category Category,
+func (x *<todoFixWeaverToAllowDupMetricNamesIt'sNowPossibleThxToUsingIds>) WithLabelValues(
+	number int,
+	class Class,
 	fraction float64,
 ) prometheus.Counter {
 	// TODO(bwplotka): This is actually not ideal for efficiency reasons (type conversions to string).
   // Fix might require internals to completely differ in the client_golang for the efficient solution.
 	return x.CounterVec.WithLabelValues(
-		fmt.Sprintf("%v", integer),
-		fmt.Sprintf("%v", category),
+		fmt.Sprintf("%v", number),
+		fmt.Sprintf("%v", class),
 		fmt.Sprintf("%v", fraction),
 	)
 }

@@ -28,7 +28,7 @@ func MustNewMyAppSomeElements(reg prometheus.Registerer) prometheus.Gauge {
 		Help: "some metric",
 		Unit: "elements", // Yolo parsing of UCUM.
 		ConstLabels: map[string]string{
-			"__schema_url__": "https://bwplotka.dev/semconv/1.2.0",
+			"__schema_url__": "https://bwplotka.dev/semconv/1.1.0",
 		},
 		
 	})

@@ -11,7 +11,8 @@ import (
 	"time"
 
 	"github.com/bwplotka/metric-rename-demo/my-org/my-app/semconv.gen/1.0.0/my_app_custom_elements"
-	"github.com/bwplotka/metric-rename-demo/my-org/my-app/semconv.gen/my_app_custom_elements/2"
+	"github.com/bwplotka/metric-rename-demo/my-org/my-app/semconv.gen/1.1.0/my_app_custom_elements/2"
+	"github.com/bwplotka/metric-rename-demo/my-org/my-app/semconv.gen/my_app_custom_elements/3"
 
 	"github.com/bwplotka/metric-rename-demo/my-org/my-app/semconv.gen/1.0.0/my_app_latency"
 	"github.com/bwplotka/metric-rename-demo/my-org/my-app/semconv.gen/my_app_latency/2"
@@ -31,7 +32,7 @@ func init() {
 
 func main() {
 	addrFlag := flag.String("listen-address", ":9011", "Address to listen on. Available HTTP paths: /metrics")
-	metricDefinition := flag.String("metric-source", "manual", "Metric definition source to use ['manual', 'generated@v1.0.0', 'generated@v1.1.0")
+	metricDefinition := flag.String("metric-source", "manual", "Metric definition source to use ['manual', 'generated@v1.0.0', 'generated@v1.1.0', 'generated@v1.2.0'")
 	flag.Parse()
 
 	reg := prometheus.NewRegistry()
@@ -61,6 +62,11 @@ func main() {
 	case "generated@v1.1.0":
 		elementsCount = my_app_custom_elements_2.MustNewMyAppCustomElementsChangedTotal(reg).
 			WithLabelValues(100, my_app_custom_elements_2.FirstClass, 1.2414)
+		latency = my_app_latency_2.MustNewMyAppLatencySeconds(reg, []float64{1, 10, 100}). // Buckets has to scaled too.
+			WithLabelValues(200)
+	case "generated@v1.2.0":
+		elementsCount = my_app_custom_elements_3.MustNewMyAppCustomElementsChangedTotal(reg).
+			WithLabelValues(100, my_app_custom_elements_3.FirstClass, 1.2414)
 		latency = my_app_latency_2.MustNewMyAppLatencySeconds(reg, []float64{1, 10, 100}). // Buckets has to scaled too.
 			WithLabelValues(200)
 	default:

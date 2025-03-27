@@ -13,7 +13,7 @@
 
 // Code generated from semantic convention specification. DO NOT EDIT.
 
-package my_app_latency_2
+package my_app_latency
 
 import (
 	"fmt"
@@ -21,14 +21,16 @@ import (
 	"github.com/prometheus/client_golang/prometheus/promauto"
 )
 
-// MustNew returns my_app_latency.2.
-func MustNewMyAppLatencySeconds(reg prometheus.Registerer, buckets []float64) *MyAppLatencySeconds {
-	return &MyAppLatencySeconds{promauto.With(reg).NewHistogramVec(prometheus.HistogramOpts{
-		Name: "my_app_latency_seconds",
-		Help: "Histogram with my-app latency seconds (1.1.0)",
-		Unit: "seconds", // Yolo parsing of UCUM.
+// MustNew returns my_app_latency.
+// Deprecated: Use my_app_latency_2 instead.
+// Note: {"updated": {"backward_promql": "value{} * 1000", "forward_promql": "value{} / 1000", "note": "Ups, we did not use base unit, our bad. This metric should be auto-transformable, see diff for all changes.", "replaced_by_id": "my_app_latency.2"}}
+func MustNewMyAppLatencyMilliseconds(reg prometheus.Registerer, buckets []float64) *MyAppLatencyMilliseconds {
+	return &MyAppLatencyMilliseconds{promauto.With(reg).NewHistogramVec(prometheus.HistogramOpts{
+		Name: "my_app_latency_milliseconds",
+		Help: "Histogram with my-app latency milliseconds (1.0.0)",
+		Unit: "milliseconds", // Yolo parsing of UCUM.
 		ConstLabels: map[string]string{
-			"__schema_url__": "https://bwplotka.dev/semconv/1.2.0",
+			"__schema_url__": "https://bwplotka.dev/semconv/1.1.0",
 		},
 		Buckets: buckets,
 	}, []string{
@@ -37,11 +39,11 @@ func MustNewMyAppLatencySeconds(reg prometheus.Registerer, buckets []float64) *M
 	})}
 }
 
-type MyAppLatencySeconds struct {
+type MyAppLatencyMilliseconds struct {
 	*prometheus.HistogramVec
 }
 
-func (x *MyAppLatencySeconds) WithLabelValues(
+func (x *MyAppLatencyMilliseconds) WithLabelValues(
 	code int,
 ) prometheus.Observer {
 	// TODO(bwplotka): This is actually not ideal for efficiency reasons (type conversions to string).

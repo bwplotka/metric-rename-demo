@@ -30,7 +30,7 @@ func MustNewMyAppLatencyMilliseconds(reg prometheus.Registerer, buckets []float6
 		Help: "Histogram with my-app latency milliseconds (1.0.0)",
 		Unit: "milliseconds", // Yolo parsing of UCUM.
 		ConstLabels: map[string]string{
-			"__schema_url__": "https://bwplotka.dev/semconv/1.1.0",
+			"__schema_url__": "https://bwplotka.dev/semconv/1.2.0",
 		},
 		Buckets: buckets,
 	}, []string{
