@@ -1,7 +1,7 @@
 # Version of this file.
 version: 1
 
-# map from identity of an element to its id(s), ordered from newest to latest.
+# map from identity of an element to its id(s), ordered from the newest to the oldest.
 metrics_ids:
   my_app_latency_seconds~seconds.histogram:
   - id: "my_app_latency.2"

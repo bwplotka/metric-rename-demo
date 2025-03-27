@@ -2,7 +2,7 @@
 version: 1
 
 # changelog contains all changes made to elements with the same semantic id
-# sorted from newest to oldest.
+# sorted from the newest to the oldest.
 metrics_changelog:
   my_app_latency:
   # my_app_latency vs my_app_latency.2
