@@ -22,7 +22,7 @@ const (
 	myAppImage = "quay.io/bwplotka/my-app:latest"
 
 	// Prometheus built from "rename-kubecon" branch.
-	promImage = "quay.io/bwplotka/prometheus:semconv-v1.6"
+	promImage = "quay.io/bwplotka/prometheus:semconv-v1.7"
 )
 
 // Requires make docker DOCKER_TAG=latest before starting.
@@ -42,7 +42,7 @@ func TestMyApp_PrometheusWriting(t *testing.T) {
 	testutil.Ok(t, e2e.StartAndWaitReady(myApp, myApp2))
 
 	// Create a go routine that switches runnables under a single name for different versions.
-	switchInterval := 5 * time.Minute
+	switchInterval := 10 * time.Minute
 	activeSchemaVersion := 0
 	myAppSwitchingFuture := newMyAppFuture(e, "my-app")
 	myAppSwitching := newMyAppFromFuture(myAppSwitchingFuture, myAppImage, map[string]string{"-metric-source": schemaVersions[activeSchemaVersion]})
@@ -95,9 +95,9 @@ https://www.bwplotka.dev/semconv/v1.0.0/my-app.yaml
 
 var promURL1 = func() string { ret, _ := url.QueryUnescape(`/query?g0.expr=my_app_latency_seconds_sum%7B__schema_url__%3D"https%3A%2F%2Fbwplotka.dev%2Fsemconv%2F1.1.0"%7D&g0.show_tree=0&g0.tab=table&g0.range_input=1h&g0.res_type=auto&g0.res_density=medium&g0.display_mode=lines&g0.show_exemplars=0&g1.expr=my_app_latency_seconds_sum%7B%7D&g1.show_tree=0&g1.tab=table&g1.range_input=1h&g1.res_type=auto&g1.res_density=medium&g1.display_mode=lines&g1.show_exemplars=0&g2.expr=my_app_latency_milliseconds_sum%7B%7D&g2.show_tree=0&g2.tab=table&g2.range_input=1h&g2.res_type=auto&g2.res_density=medium&g2.display_mode=lines&g2.show_exemplars=0&g3.expr=histogram_quantile%28%0A++0.9%2C%0A++sum+by+%28le%2C+instance%2C+code%29+%28%0A++++rate%28%0A++++++my_app_latency_seconds_bucket%7B__schema_url__%3D"https%3A%2F%2Fbwplotka.dev%2Fsemconv%2F1.1.0"%7D%5B1m%5D%0A++++%29%0A++%29%0A%29&g3.show_tree=0&g3.tab=table&g3.range_input=1h&g3.res_type=auto&g3.res_density=medium&g3.display_mode=lines&g3.show_exemplars=0`); return ret }()
 
-var promURL2 = func() string { ret, _ := url.QueryUnescape(`/query?g0.expr=my_app_custom_elements_changed_total%7B__schema_url__%3D"https%3A%2F%2Fbwplotka.dev%2Fsemconv%2F1.1.0"%2C+number%3D"100"%7D&g0.show_tree=0&g0.tab=table&g0.range_input=1h&g0.res_type=auto&g0.res_density=medium&g0.display_mode=lines&g0.show_exemplars=0&g1.expr=my_app_custom_elements_changed_total%7B%7D&g1.show_tree=0&g1.tab=table&g1.range_input=1h&g1.res_type=auto&g1.res_density=medium&g1.display_mode=lines&g1.show_exemplars=0&g2.expr=my_app_custom_elements_total%7B%7D&g2.show_tree=0&g2.tab=table&g2.range_input=1h&g2.res_type=auto&g2.res_density=medium&g2.display_mode=lines&g2.show_exemplars=0&g3.expr=my_app_custom_elements_changed_total%7B__schema_url__%3D"https%3A%2F%2Fbwplotka.dev%2Fsemconv%2F1.1.0"%2C+number%3D"100"%7D&g3.show_tree=0&g3.tab=table&g3.range_input=1h&g3.res_type=auto&g3.res_density=medium&g3.display_mode=lines&g3.show_exemplars=0&g4.expr=my_app_custom_elements_total%7B__schema_url__%3D"https%3A%2F%2Fbwplotka.dev%2Fsemconv%2F1.0.0"%2C+integer%3D"100"%7D&g4.show_tree=0&g4.tab=table&g4.range_input=1h&g4.res_type=auto&g4.res_density=medium&g4.display_mode=lines&g4.show_exemplars=0`); return ret }()
+var promURL2 = func() string { ret, _ := url.QueryUnescape(`/query?g0.expr=my_app_custom_changed_elements_total%7B__schema_url__%3D"https%3A%2F%2Fbwplotka.dev%2Fsemconv%2F1.1.0"%2C+number%3D"100"%7D&g0.show_tree=0&g0.tab=table&g0.range_input=1h&g0.res_type=auto&g0.res_density=medium&g0.display_mode=lines&g0.show_exemplars=0&g1.expr=my_app_custom_changed_elements_total%7B%7D&g1.show_tree=0&g1.tab=table&g1.range_input=1h&g1.res_type=auto&g1.res_density=medium&g1.display_mode=lines&g1.show_exemplars=0&g2.expr=my_app_custom_elements_total%7B%7D&g2.show_tree=0&g2.tab=table&g2.range_input=1h&g2.res_type=auto&g2.res_density=medium&g2.display_mode=lines&g2.show_exemplars=0&g3.expr=my_app_custom_changed_elements_total%7B__schema_url__%3D"https%3A%2F%2Fbwplotka.dev%2Fsemconv%2F1.1.0"%2C+number%3D"100"%7D&g3.show_tree=0&g3.tab=table&g3.range_input=1h&g3.res_type=auto&g3.res_density=medium&g3.display_mode=lines&g3.show_exemplars=0&g4.expr=my_app_custom_elements_total%7B__schema_url__%3D"https%3A%2F%2Fbwplotka.dev%2Fsemconv%2F1.0.0"%2C+integer%3D"100"%7D&g4.show_tree=0&g4.tab=table&g4.range_input=1h&g4.res_type=auto&g4.res_density=medium&g4.display_mode=lines&g4.show_exemplars=0`); return ret }()
 
-var promURL3 = func() string { ret, _ := url.QueryUnescape(`/query?g0.expr=rate%28my_app_custom_elements_changed_total%7B__schema_url__%3D"https%3A%2F%2Fbwplotka.dev%2Fsemconv%2F1.2.0"%2C+my_number%3D"100"%2C+instance%21~".*-pinned%3A9011"%7D%5B1m%5D%29&g0.show_tree=0&g0.tab=graph&g0.range_input=5m&g0.res_type=auto&g0.res_density=medium&g0.display_mode=lines&g0.show_exemplars=0&g1.expr=rate%28my_app_custom_elements_changed_total%7Bmy_number%3D"100"%2C+instance%21~".*-pinned%3A9011"%7D%5B1m%5D%29&g1.show_tree=0&g1.tab=graph&g1.range_input=5m&g1.res_type=auto&g1.res_density=medium&g1.display_mode=lines&g1.show_exemplars=0&g2.expr=rate%28my_app_custom_elements_total%7Binteger%3D"100"%2C+instance%21~".*-pinned%3A9011"%7D%5B1m%5D%29&g2.show_tree=0&g2.tab=graph&g2.range_input=5m&g2.res_type=auto&g2.res_density=medium&g2.display_mode=lines&g2.show_exemplars=0`); return ret }()
+var promURL3 = func() string { ret, _ := url.QueryUnescape(`/query?g0.expr=rate%28my_app_custom_changed_elements_total%7B__schema_url__%3D"https%3A%2F%2Fbwplotka.dev%2Fsemconv%2F1.2.0"%2C+my_number%3D"100"%2C+instance%21~".*-pinned%3A9011"%7D%5B1m%5D%29&g0.show_tree=0&g0.tab=graph&g0.range_input=5m&g0.res_type=auto&g0.res_density=medium&g0.display_mode=lines&g0.show_exemplars=0&g1.expr=rate%28my_app_custom_changed_elements_total%7Bmy_number%3D"100"%2C+instance%21~".*-pinned%3A9011"%7D%5B1m%5D%29&g1.show_tree=0&g1.tab=graph&g1.range_input=5m&g1.res_type=auto&g1.res_density=medium&g1.display_mode=lines&g1.show_exemplars=0&g2.expr=rate%28my_app_custom_elements_total%7Binteger%3D"100"%2C+instance%21~".*-pinned%3A9011"%7D%5B1m%5D%29&g2.show_tree=0&g2.tab=graph&g2.range_input=5m&g2.res_type=auto&g2.res_density=medium&g2.display_mode=lines&g2.show_exemplars=0`); return ret }()
 
 func newMyApp(e e2e.Environment, name, image string, flagOverride map[string]string) *e2emon.InstrumentedRunnable {
 	return newMyAppFromFuture(newMyAppFuture(e, name), image, flagOverride)
@@ -127,10 +127,33 @@ func newPrometheus(env e2e.Environment, name, image string, scrapeAddrs []string
 	ports := map[string]int{"http": 9090}
 
 	f := env.Runnable(name).WithPorts(ports).Future()
+
+	if err := os.MkdirAll(filepath.Join(f.Dir(), "semconv"), os.ModePerm); err != nil {
+		return &e2emon.Prometheus{Runnable: e2e.NewFailedRunnable(name, fmt.Errorf("create local semconv dir: %w", err))}
+	}
+	chBytes, err := os.ReadFile("../my-org/semconv/changelog.yaml")
+	if err != nil {
+		return &e2emon.Prometheus{Runnable: e2e.NewFailedRunnable(name, fmt.Errorf("read changelog file: %w", err))}
+	}
+	if err := os.WriteFile(filepath.Join(f.Dir(), "semconv/changlog.yml"), chBytes, 0o600); err != nil {
+		return &e2emon.Prometheus{Runnable: e2e.NewFailedRunnable(name, fmt.Errorf("create local changelog file failed: %w", err))}
+	}
+	idsBytes, err := os.ReadFile("../my-org/semconv/ids.yaml")
+	if err != nil {
+		return &e2emon.Prometheus{Runnable: e2e.NewFailedRunnable(name, fmt.Errorf("read ids file: %w", err))}
+	}
+	if err := os.WriteFile(filepath.Join(f.Dir(), "semconv/ids.yml"), idsBytes, 0o600); err != nil {
+		return &e2emon.Prometheus{Runnable: e2e.NewFailedRunnable(name, fmt.Errorf("create local ids file failed: %w", err))}
+	}
+
 	config := fmt.Sprintf(`
 global:
   external_labels:
     prometheus: %v
+semconv:
+  schema_overrides:
+    https://bwplotka.dev/semconv: %v/semconv
+  
 scrape_configs:
 - job_name: 'self'
   scrape_interval: 5s
@@ -142,7 +165,7 @@ scrape_configs:
   scrape_timeout: 5s
   static_configs:
   - targets: [%v]
-`, name, f.InternalEndpoint("http"), strings.Join(scrapeAddrs, ","))
+`, name, f.Dir(), f.InternalEndpoint("http"), strings.Join(scrapeAddrs, ","))
 	if err := os.WriteFile(filepath.Join(f.Dir(), "prometheus.yml"), []byte(config), 0o600); err != nil {
 		return &e2emon.Prometheus{Runnable: e2e.NewFailedRunnable(name, fmt.Errorf("create prometheus config failed: %w", err))}
 	}
