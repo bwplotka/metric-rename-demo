@@ -1,0 +1,116 @@
+# Schema: https://github.com/open-telemetry/weaver/blob/main/schemas/semconv.schema.json with --simple mode.
+groups:
+- id: "my_app_latency.2"
+  type: metric
+  metric_name: my_app_latency_seconds # Previously "my_app_latency_milliseconds".
+  unit: "{second}" # Previously "{millisecond}". ("s"?)
+  instrument: "histogram"
+  brief: "Histogram with my-app latency seconds (1.1.0)"
+  attributes:
+  - id: code
+    type: int
+    brief: "HTTP status code."
+- id: "my_app_custom_elements.3"
+  type: metric
+  metric_name: my_app_custom_changed_elements_total # Previously "my_app_custom_elements_total".
+  unit: "{element}"
+  instrument: "counter"
+  brief: "Custom counter metric (1.2.0) for my app counting important elements. It serves as an example of a very important metric that everyone is using. Replacement to my_app_custom_elements_total~elements.counter"
+  attributes:
+  - id: "integer"
+    tag: "my_number" # Previously "number" and before "integer".
+    type: int
+    brief: "Important label that specifies the integer for this count."
+  - id: "category"
+    tag: "class" # Previously "category".
+    type:
+      members:
+      - id: "first"
+        value: "FIRST" # Previously "first".
+      - id: "second"
+        value: "SECOND" # Previously "second".
+      - id: "other"
+        value: "OTHER" # Previously "other".
+    brief: "Important label that specifies the category for this count."
+  - id: "fraction"
+    type: double
+    brief: "This is an important label that specifies the fraction for this count."
+### Deprecated elements.
+- id: "my_app_latency"
+  type: metric
+  metric_name: my_app_latency_milliseconds
+  unit: "{millisecond}"
+  instrument: "histogram"
+  brief: "Histogram with my-app latency milliseconds (1.0.0)"
+  deprecated:
+    reason: updated
+    note: "Ups, we did not use base unit, our bad. This metric should be auto-transformable, see diff for all changes."
+    replaced_by_id: "my_app_latency.2"
+    forward_promql: "value{} / 1000"
+    backward_promql: "value{} * 1000"
+  attributes:
+  - id: code
+    type: int
+    brief: "HTTP status code."
+- id: "my_app_custom_elements.2"
+  type: metric
+  metric_name: <TODO fix weaver to allow dup metric names. It's now possible thx to using IDs> # Previously "my_app_custom_elements_total".
+  unit: "{element}"
+  instrument: "counter"
+  brief: "Custom counter metric (1.1.0) for my app counting important elements. It serves as an example of a very important metric that everyone is using. Replacement to my_app_custom_elements_total~elements.counter"
+  deprecated:
+    reason: updated
+    note: "Ups, changing attribute tag again, number to my_number."
+    replaced_by_id: "my_app_latency.2"
+  attributes:
+  - id: "integer"
+    tag: "number" # Previously "integer".
+    type: int
+    brief: "Important label that specifies the integer for this count."
+  - id: "category"
+    tag: "class" # Previously "category".
+    type:
+      members:
+      - id: "first"
+        value: "FIRST" # Previously "first".
+      - id: "second"
+        value: "SECOND" # Previously "second".
+      - id: "other"
+        value: "OTHER" # Previously "other".
+    brief: "Important label that specifies the category for this count."
+  - id: "fraction"
+    type: double
+    brief: "This is an important label that specifies the fraction for this count."
+- id: "my_app_custom_elements"
+  type: metric
+  metric_name: my_app_custom_elements_total
+  unit: "{element}"
+  instrument: "counter"
+  brief: "Custom counter metric (1.0.0) for my app counting important elements. It serves as an example of a very important metric that everyone is using."
+  deprecated:
+    reason: updated
+    replaced_by_id: "my_app_custom_elements.2"
+    note: "We didn't like the old name sorry. This metric should be auto-transformable, see diff for all changes."
+  attributes:
+  - id: "integer"
+    type: int
+    brief: "Important label that specifies the integer for this count."
+  - id: "category"
+    type:
+      members:
+      - id: "first"
+      - id: "second"
+      - id: "other"
+    brief: "Important label that specifies the category for this count."
+  - id: "fraction"
+    type: double
+    brief: "This is an important label that specifies the fraction for this count."
+- id: "my_app_some_elements"
+  type: metric
+  metric_name: my_app_some_elements
+  unit: "{element}"
+  instrument: "gauge"
+  brief: "some metric"
+  deprecated:
+    reason: "obsoleted"
+    note: "Not useful anymore..."

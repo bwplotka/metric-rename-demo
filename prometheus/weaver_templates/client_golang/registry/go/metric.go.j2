@@ -1,0 +1,159 @@
+{%- if ctx.id.split('.')[-1].isalnum() -%}
+	{%- set revision = ctx.id.split('.')[-1] | lower | snake_case %}
+	{%- set semantic_id = ctx.id.split('.')[:-1] | join('.') | lower | snake_case -%}
+	{%- set my_file_name = semantic_id ~ "/" ~ revision ~ "/" ~ ctx.metric_name | lower | snake_case ~ ".go" -%}
+{%- else -%}
+	{%- set my_file_name = ctx.id | lower | snake_case  ~ "/" ~ ctx.metric_name | lower | snake_case ~ ".go" -%}
+{%- endif -%}
+{%- set package_name = ctx.id | lower | snake_case -%}
+{{- template.set_file_name(my_file_name) -}}
+{%- set instrToVecTypes = {
+	'histogram': "HistogramVec",
+ 	'counter': "CounterVec",
+  'gauge': "GaugeVec",
+}-%}
+{%- set instrToTypes = {
+	'histogram': "Histogram",
+ 	'counter': "Counter",
+  'gauge': "Gauge",
+}-%}
+{%- set instrToOptTypes = {
+	'histogram': "HistogramOpts",
+ 	'counter': "CounterOpts",
+	'gauge': "GaugeOpts",
+}-%}
+{%- set instrToWithLabelValuesTypes = {
+	'histogram': "Observer",
+ 	'counter': "Counter",
+  'gauge': "Gauge",
+}-%}
+{%- set labelTypeToTypes = {
+	'string': "string",
+ 	'int': "int",
+	'double': "float64",
+}-%}
+// Copyright 2025 The Prometheus Authors
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+// Code generated from semantic convention specification. DO NOT EDIT.
+
+package {{ package_name}}
+
+import (
+{%- if ctx.attributes is defined and ctx.attributes | length > 0 %}
+	"fmt"
+
+{%- endif %}
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promauto"
+)
+
+{%- for label in ctx.attributes -%}
+	{%- if label.type.members is defined %}
+
+type {{ label.tag | pascal_case }} string
+
+const (
+	{%- for value in label.type.members %}
+		{{ value.id | pascal_case ~  label.tag | pascal_case }} {{ label.tag | pascal_case }} = "{{ value.value }}"
+	{%- endfor %}
+)
+	{%- endif %}
+{%- endfor %}
+
+// MustNew returns {{ ctx.id }}.
+{%- if ctx.deprecated is defined  %}
+	{%- if ctx.deprecated.updated is defined  %}
+// Deprecated: Use {{ ctx.deprecated.updated.replaced_by_id | lower | snake_case }} instead.
+// Note: {{ ctx.deprecated }}
+	{%- else %}
+// Deprecated {{ ctx.deprecated }}
+	{%- endif %}
+{%- endif %}
+
+{%- if ctx.instrument == "histogram" %}
+{%- set bucketParam = ", buckets []float64" %}
+{%- set bucketDefine = "Buckets: buckets," %}
+{%- endif %}
+{%- set type_name = ctx.metric_name | lower | pascal_case %}
+{%- if ctx.attributes is defined and ctx.attributes | length > 0 %}
+func MustNew{{ type_name }}(reg prometheus.Registerer{{ bucketParam }}) *{{ type_name }} {
+	return &{{ type_name }}{promauto.With(reg).New{{ instrToVecTypes[ctx.instrument] }}(prometheus.{{ instrToOptTypes[ctx.instrument] }}{
+		Name: "{{ ctx.metric_name }}",
+		{% if ctx.note is defined -%}
+		Help: "{{ ctx.note }}",
+		{% else -%}
+		Help: "{{ ctx.brief }}",
+		{%- endif %}
+		{%- if ctx.unit is defined and ctx.unit != "{unknown}" %}
+		Unit: "{{ ctx.unit | replace("{", "") | replace("}", "") }}s", // Yolo parsing of UCUM.
+		{%- endif %}
+		ConstLabels: map[string]string{
+			"__schema_url__": "{{ params.schema_url }}",
+		},
+		{% if bucketDefine is defined -%}
+		{{ bucketDefine }}
+		{%- endif %}
+	}, []string{
+{%- for label in ctx.attributes %}
+		// {{ label.brief }}
+		"{{label.tag}}",
+{%- endfor %}
+	})}
+}
+
+type {{ type_name }} struct {
+	*prometheus.{{ instrToVecTypes[ctx.instrument] }}
+}
+
+func (x *{{ type_name }}) WithLabelValues(
+{%- for label in ctx.attributes %}
+	{%- if label.type.members is defined %}
+	{{label.tag}} {{ label.tag | pascal_case }},
+	{%- else %}
+	{{label.tag}} {{ labelTypeToTypes[label.type] }},
+	{%- endif %}
+{%- endfor %}
+) prometheus.{{ instrToWithLabelValuesTypes[ctx.instrument] }} {
+	// TODO(bwplotka): This is actually not ideal for efficiency reasons (type conversions to string).
+  // Fix might require internals to completely differ in the client_golang for the efficient solution.
+	return x.{{ instrToVecTypes[ctx.instrument] }}.WithLabelValues(
+	{%- for label in ctx.attributes %}
+		fmt.Sprintf("%v", {{label.tag}}),
+	{%- endfor %}
+	)
+}
+{%- else %}
+func MustNew{{ type_name }}(reg prometheus.Registerer{{ bucketParam }}) prometheus.{{ instrToTypes[ctx.instrument] }} {
+	return promauto.With(reg).New{{ instrToTypes[ctx.instrument] }}(prometheus.{{ instrToOptTypes[ctx.instrument] }}{
+		Name: "{{ ctx.metric_name }}",
+		{% if ctx.note is defined -%}
+		Help: "{{ ctx.note }}",
+		{% else -%}
+		Help: "{{ ctx.brief }}",
+		{%- endif %}
+		{%- if ctx.unit is defined and ctx.unit != "{unknown}" %}
+		Unit: "{{ ctx.unit | replace("{", "") | replace("}", "") }}s", // Yolo parsing of UCUM.
+		{%- endif %}
+		ConstLabels: map[string]string{
+			"__schema_url__": "{{ params.schema_url }}",
+		},
+		{% if bucketDefine is defined -%}
+		{{ bucketDefine }}
+		{%- endif %}
+	})
+}
+{%- endif %}
+
+
+

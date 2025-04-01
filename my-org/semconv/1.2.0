@@ -1,0 +1,8 @@
+file_format: 1.1.0
+
+# This file is not used for demo, manually (for now) created changelog.yaml and ids.yaml are.
+schema_url: https://bwplotka.dev/semconv/schemas/1.2.0
+versions:
+  1.2.0
+  1.1.0:
+  1.0.0:

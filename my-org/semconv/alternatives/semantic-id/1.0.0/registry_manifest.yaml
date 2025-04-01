@@ -1,0 +1,7 @@
+# Should we use 1.1.0 file with diff baked in?
+# https://opentelemetry.io/docs/specs/otel/schemas/file_format_v1.1.0/
+
+name: my-org
+description: my-org Semantic Conventions Registry
+semconv_version: 1.0.0
+schema_base_url: https://bwplotka.dev/semconv/

@@ -1,0 +1,135 @@
+{%- set my_file_name = ctx.metric_name | lower | snake_case ~ "/" ~ ctx.instrument ~ ".go" -%}
+{{- template.set_file_name(my_file_name) -}}
+{%- set package_name = ctx.metric_name -%}
+{%- set instrToVecTypes = {
+	'histogram': "HistogramVec",
+ 	'counter': "CounterVec",
+  'gauge': "GaugeVec",
+}-%}
+{%- set instrToTypes = {
+	'histogram': "Histogram",
+ 	'counter': "Counter",
+  'gauge': "Gauge",
+}-%}
+{%- set instrToOptTypes = {
+	'histogram': "HistogramOpts",
+ 	'counter': "CounterOpts",
+	'gauge': "GaugeOpts",
+}-%}
+{%- set instrToWithLabelValuesTypes = {
+	'histogram': "Observer",
+ 	'counter': "Counter",
+  'gauge': "Gauge",
+}-%}
+{%- set labelTypeToTypes = {
+	'string': "string",
+ 	'int': "int",
+	'double': "float64",
+}-%}
+
+{#{% macro const_label_type(label) -%}#}
+{#{{ construct_name | pascal_case ~ label.tag | pascal_case }}#}
+{#{%- endmacro %}#}
+// Copyright 2025 The Prometheus Authors
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+// Code generated from semantic convention specification. DO NOT EDIT.
+
+package {{ package_name}}
+
+import (
+{%- if ctx.attributes is defined and ctx.attributes | length > 0 %}
+	"fmt"
+
+{%- endif %}
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promauto"
+)
+
+{%- for label in ctx.attributes -%}
+	{%- if label.type.members is defined %}
+
+type {{ label.tag | pascal_case }} string
+
+const (
+	{%- for value in label.type.members %}
+		{{ value.id | pascal_case ~  label.tag | pascal_case }} {{ label.tag | pascal_case }} = "{{ value.value }}"
+	{%- endfor %}
+)
+	{%- endif %}
+{%- endfor %}
+
+// MustNew returns {{ ctx.id }}.
+{%- if ctx.deprecated is defined  %}
+// Deprecated; {{ ctx.deprecated }}
+{%- endif %}
+
+{%- if ctx.attributes is defined and ctx.attributes | length > 0 %}
+func MustNew{{ instrToVecTypes[ctx.instrument] }}(reg prometheus.Registerer) *{{ instrToVecTypes[ctx.instrument] }} {
+	reg = prometheus.WrapRegistererWith(prometheus.Labels{"__schema_url__": "{{ params.schema_url }}"}, reg)
+
+	return &{{ instrToVecTypes[ctx.instrument] }}{promauto.With(reg).New{{ instrToVecTypes[ctx.instrument] }}(prometheus.{{ instrToOptTypes[ctx.instrument] }}{
+		Name: "{{ ctx.metric_name }}",
+		{% if ctx.note is defined -%}
+		Help: "{{ ctx.note }}",
+		{% else -%}
+		Help: "{{ ctx.brief }}",
+		{%- endif %}
+		// Unit: "{{ ctx.unit }}" // TODO(bwplotka): Add Unit as one of the supported options.
+	}, []string{
+{%- for label in ctx.attributes %}
+		// {{ label.brief }}
+		"{{label.tag}}",
+{%- endfor %}
+	})}
+}
+
+type {{ instrToVecTypes[ctx.instrument] }} struct {
+	*prometheus.{{ instrToVecTypes[ctx.instrument] }}
+}
+
+func (x *{{ instrToVecTypes[ctx.instrument] }}) WithLabelValues(
+{%- for label in ctx.attributes %}
+	{%- if label.type.members is defined %}
+	{{label.tag}} {{ label.tag | pascal_case }},
+	{%- else %}
+	{{label.tag}} {{ labelTypeToTypes[label.type] }},
+	{%- endif %}
+{%- endfor %}
+) prometheus.{{ instrToWithLabelValuesTypes[ctx.instrument] }} {
+	// TODO(bwplotka): This is actually not ideal for efficiency reasons (type conversions to string).
+  // Fix might require internals to completely differ in the client_golang for the efficient solution.
+	return x.{{ instrToVecTypes[ctx.instrument] }}.WithLabelValues(
+	{%- for label in ctx.attributes %}
+		fmt.Sprintf("%v", {{label.tag}}),
+	{%- endfor %}
+	)
+}
+{%- else %}
+func MustNew{{ instrToTypes[ctx.instrument] }}(reg prometheus.Registerer) prometheus.{{ instrToTypes[ctx.instrument] }} {
+	reg = prometheus.WrapRegistererWith(prometheus.Labels{"__schema_url__": "{{ params.schema_url }}"}, reg)
+
+	return promauto.With(reg).New{{ instrToTypes[ctx.instrument] }}(prometheus.{{ instrToOptTypes[ctx.instrument] }}{
+		Name: "{{ ctx.metric_name }}",
+		{% if ctx.note is defined -%}
+		Help: "{{ ctx.note }}",
+		{% else -%}
+		Help: "{{ ctx.brief }}",
+		{%- endif %}
+		// Unit: "{{ ctx.unit }}" // TODO(bwplotka): Add Unit as one of the supported options.
+	})
+}
+{%- endif %}
+
+
+

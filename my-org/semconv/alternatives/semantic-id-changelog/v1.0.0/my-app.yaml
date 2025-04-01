@@ -1,0 +1,36 @@
+# Schema: https://github.com/open-telemetry/weaver/blob/main/schemas/semconv.schema.json with --simple mode.
+groups:
+- id: "my_app_latency"
+  type: metric
+  metric_name: my_app_latency_milliseconds_total
+  unit: "{milliseconds}"
+  instrument: "histogram"
+  brief: "Histogram with my-app latency milliseconds (v1.0.0)"
+  attributes:
+  - id: code
+    type: int
+    brief: "HTTP status code."
+- id: "my_app_custom_elements"
+  type: metric
+  metric_name: my_app_custom_elements_total
+  instrument: "counter"
+  brief: "Custom counter metric (v1.0.0) for my app counting important elements. It serves as an example of a very important metric that everyone is using."
+  attributes:
+  - id: "integer"
+    type: int
+    brief: "Important label that specifies the integer for this count."
+  - id: "category"
+    type:
+      members:
+      - id: "first"
+      - id: "second"
+      - id: "other"
+    brief: "Important label that specifies the category for this count."
+  - id: "fraction"
+    type: double
+    brief: "This is an important label that specifies the fraction for this count."
+- id: "my_app_some_elements"
+  type: metric
+  metric_name: my_app_some_elements_totals
+  instrument: "gauge"
+  brief: "some metric"

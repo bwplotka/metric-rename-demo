@@ -1,0 +1,73 @@
+# Schema: https://github.com/open-telemetry/weaver/blob/main/schemas/semconv.schema.json with --simple mode.
+groups:
+- id: "my_app_latency_seconds_total~seconds.histogram"
+  type: metric
+  brief: "Histogram with my-app latency seconds (v1.1.0)"
+  attributes:
+  - id: code
+    type: int
+    brief: "HTTP status code."
+- id: "my_app_custom_elements_changed_total~counter"
+  type: metric
+  brief: "Custom counter metric (v1.1.0) for my app counting important elements. It serves as an example of a very important metric that everyone is using. Replacement to my_app_custom_elements_total~counter"
+  attributes:
+  - id: integer
+    tag: "number"
+    type: int
+    brief: "Important label that specifies the integer for this count."
+  - id: category
+    tag: "class"
+    type:
+      members:
+      - id: first
+        value: "FIRST"
+      - id: second
+        value: "SECOND"
+      - id: other
+        value: "OTHER"
+    brief: "Important label that specifies the category for this count."
+  - id: "fraction"
+    type: double
+    brief: "This is an important label that specifies the fraction for this count."
+# Deprecated (replaced) metrics.
+- id: "my_app_latency_milliseconds_total~milliseconds.histogram"
+  type: metric
+  brief: "Histogram with my-app latency milliseconds (v1.0.0)"
+  deprecated:
+    reason: updated
+    note: "Ups, we did not use base unit, our bad. This metric should be auto-transformable, see diff for all changes."
+    replaced_by_id: "my_app_latency_seconds_total~seconds.histogram"
+    forward_promql: "$old / 1000"
+    backward_promql: "$new * 1000"
+  attributes:
+  - id: code
+    type: int
+    brief: "HTTP status code."
+- id: "my_app_custom_elements_total~counter"
+  type: metric
+  brief: "Custom counter metric (v1.0.0) for my app counting important elements. It serves as an example of a very important metric that everyone is using."
+  deprecated:
+    reason: updated
+    replaced_by_id: "my_app_custom_elements_changed_total~counter"
+    note: "We didn't like the old name sorry. This metric should be auto-transformable, see diff for all changes."
+  attributes:
+  - id: "integer"
+    type: int
+    brief: "Important label that specifies the integer for this count."
+  - id: "category"
+    type:
+      members:
+      - id: "first"
+      - id: "second"
+      - id: "other"
+    brief: "Important label that specifies the category for this count."
+  - id: "fraction"
+    type: double
+    brief: "This is an important label that specifies the fraction for this count."
+# Deprecated, no replacement.
+- id: "my_app_some_elements_total~gauge"
+  type: metric
+  brief: "some metric"
+  deprecated:
+    reason: "obsoleted"
+    note: "Not useful anymore"
