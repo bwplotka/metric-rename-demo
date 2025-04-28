@@ -21,8 +21,8 @@ import (
 const (
 	myAppImage = "quay.io/bwplotka/my-app:latest"
 
-	// Prometheus built from "rename-kubecon" branch.
-	promImage = "quay.io/bwplotka/prometheus:semconv-v1.7"
+	// Prometheus built from "rename-kubecon" branch (https://github.com/prometheus/prometheus/pull/16353).
+	promImage = "quay.io/bwplotka/prometheus:semconv"
 )
 
 // Requires make docker DOCKER_TAG=latest before starting.
