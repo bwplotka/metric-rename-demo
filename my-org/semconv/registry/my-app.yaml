@@ -61,7 +61,7 @@ groups:
   deprecated:
     reason: updated
     note: "Ups, changing attribute tag again, number to my_number."
-    replaced_by_id: "my_app_latency.2"
+    replaced_by_id: "my_app_custom_elements.3"
   attributes:
   - id: "integer"
     tag: "number" # Previously "integer".
